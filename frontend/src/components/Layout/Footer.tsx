@@ -79,17 +79,6 @@ export default function Footer() {
           <div className="footer-bottom-text">
             © {currentYear} MegaDraw Pty Ltd. All rights reserved. ABN 12 345 678 901
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <a
-              href="https://www.gamblinghelponline.org.au"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="footer-link"
-              style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px' }}
-            >
-              <ExternalLink size={12} /> Gambling Help Online: 1800 858 858
-            </a>
-          </div>
         </div>
       </div>
     </footer>

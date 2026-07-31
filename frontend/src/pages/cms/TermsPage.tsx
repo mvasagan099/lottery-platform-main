@@ -163,19 +163,6 @@ export function ResponsibleGamingPage() {
               <li><strong>Underage Prevention:</strong> Strict mandatory KYC checks ensure no individuals under 18 can play or withdraw.</li>
             </ul>
           </section>
-
-          <hr style={{ borderColor: 'var(--border-color)', opacity: 0.5 }} />
-
-          <section>
-            <h2 style={{ color: 'var(--text-primary)', fontSize: '1.25rem', marginBottom: '12px' }}>Helplines & Support</h2>
-            <p>
-              If you or someone you know is experiencing gambling-related distress, confidential support is available 24/7:
-            </p>
-            <div style={{ background: 'var(--bg-secondary)', padding: '16px 20px', borderRadius: '12px', marginTop: '12px' }}>
-              <div><strong>Gambling Help Online:</strong> Call 1800 858 858</div>
-              <div><strong>Website:</strong> <a href="https://www.gamblinghelponline.org.au" target="_blank" rel="noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>gamblinghelponline.org.au</a></div>
-            </div>
-          </section>
         </div>
       </div>
     </div>

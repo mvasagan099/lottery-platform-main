@@ -7,7 +7,7 @@ import Footer from '@/components/Layout/Footer'
 import ProtectedRoute from '@/components/Layout/ProtectedRoute'
 import AdminRoute from '@/components/Layout/AdminRoute'
 import MaintenanceGuard from '@/components/Layout/MaintenanceGuard'
-import Spinner from '@/components/UI/Spinner'
+import LoadingScreen from '@/components/UI/LoadingScreen'
 import { GlobalErrorBoundary } from '@/components/GlobalErrorBoundary'
 import FloatingSupport from '@/components/common/FloatingSupport'
 
@@ -75,9 +75,7 @@ const AdminAffiliatesPage = lazy(() => import('@/pages/admin/AffiliatesAdminPage
 const AdminJackpotPage = lazy(() => import('@/pages/admin/JackpotManagementPage'))
 
 const PageLoader = () => (
-  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-    <Spinner size="lg" />
-  </div>
+  <LoadingScreen message="Loading MegaDraw..." />
 )
 
 export default function App() {

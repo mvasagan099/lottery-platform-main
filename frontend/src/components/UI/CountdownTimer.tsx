@@ -26,29 +26,35 @@ export default function CountdownTimer({ targetDate, size = 'md', label, onExpir
 
   const labelStyle = size === 'lg' ? { fontSize: '12px' } : {}
 
+  const sepStyle = size === 'sm'
+    ? { fontSize: '16px', fontWeight: 800, margin: '0 3px' }
+    : size === 'lg'
+    ? { fontSize: '28px', fontWeight: 800, margin: '0 6px' }
+    : { fontSize: '20px', fontWeight: 800, margin: '0 4px' }
+
   return (
     <div>
       {label && <div className="jackpot-label" style={{ marginBottom: '8px' }}>{label}</div>}
-      <div className="countdown">
+      <div className="countdown" style={{ alignItems: 'center' }}>
         {days > 0 && (
           <>
             <div className="countdown-unit">
               <div className="countdown-value" style={valueStyle}>{String(days).padStart(2, '0')}</div>
               <div className="countdown-label" style={labelStyle}>Days</div>
             </div>
-            <div className="countdown-sep">:</div>
+            <div className="countdown-sep" style={sepStyle}>:</div>
           </>
         )}
         <div className="countdown-unit">
           <div className="countdown-value" style={valueStyle}>{String(hours).padStart(2, '0')}</div>
           <div className="countdown-label" style={labelStyle}>Hrs</div>
         </div>
-        <div className="countdown-sep">:</div>
+        <div className="countdown-sep" style={sepStyle}>:</div>
         <div className="countdown-unit">
           <div className="countdown-value" style={valueStyle}>{String(minutes).padStart(2, '0')}</div>
           <div className="countdown-label" style={labelStyle}>Min</div>
         </div>
-        <div className="countdown-sep">:</div>
+        <div className="countdown-sep" style={sepStyle}>:</div>
         <div className="countdown-unit">
           <div className="countdown-value" style={valueStyle}>{String(seconds).padStart(2, '0')}</div>
           <div className="countdown-label" style={labelStyle}>Sec</div>

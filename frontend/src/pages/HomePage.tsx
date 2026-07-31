@@ -4,11 +4,12 @@ import { gamesService } from '@/services/games.service'
 import { cmsService } from '@/services/index'
 import JackpotCounter from '@/components/UI/JackpotCounter'
 import CountdownTimer from '@/components/UI/CountdownTimer'
+import LoadingScreen from '@/components/UI/LoadingScreen'
 import { ChevronRight, Zap, Shield, Users, Trophy, Star, ArrowRight, Play } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export default function HomePage() {
-  const { data: gamesData } = useQuery({
+  const { data: gamesData, isLoading: isLoadingGames } = useQuery({
     queryKey: ['games'],
     queryFn: () => gamesService.getAll(),
     select: (r) => r.data?.data || [],
@@ -30,6 +31,10 @@ export default function HomePage() {
     acc[s.key] = s.value
     return acc
   }, {}) || {}
+
+  if (isLoadingGames) {
+    return <LoadingScreen message="Loading MegaDraw Platform..." />
+  }
 
   const featuredGames = gamesData?.filter((g: any) => g.isFeatured).slice(0, 3) || []
   const allGames = gamesData || []

@@ -714,17 +714,22 @@ tbody tr:last-child td { border-bottom: none; }
 
 .countdown-label {
   font-size: var(--text-xs);
-  color: white;
+  color: var(--text-muted);
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .countdown-sep {
-  font-size: var(--text-2xl);
+  font-size: var(--text-xl);
   font-weight: 800;
-  color: white;
-  margin-top: -14px;
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 2px;
+  align-self: center;
+  line-height: 1;
 }
 
 /* ── Game Cards ──────────────────────────────────────────── */

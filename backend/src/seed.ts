@@ -508,7 +508,7 @@ async function main() {
     {
       slug: 'responsible-gaming',
       title: 'Responsible Gaming',
-      content: '# Responsible Gaming\n\nMegaDraw is committed to responsible gambling...\n\n## Setting Limits\n\nYou can set daily, weekly, or monthly deposit and spending limits.\n\n## Self-Exclusion\n\nIf you need a break, contact us to self-exclude.\n\n## Getting Help\n\nIf gambling is affecting your life, please seek help from:\n\n- Gambling Help Online: 1800 858 858\n- Gamblers Anonymous: www.gamblersanonymous.org.au',
+      content: '# Responsible Gaming\n\nMegaDraw is committed to responsible gambling...\n\n## Setting Limits\n\nYou can set daily, weekly, or monthly deposit and spending limits.\n\n## Self-Exclusion\n\nIf you need a break, contact us to self-exclude.',
       metaTitle: 'Responsible Gaming | MegaDraw',
       metaDesc: 'MegaDraw\'s commitment to responsible gambling and available support resources.',
     },
