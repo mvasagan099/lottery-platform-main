@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { walletService } from '@/services/wallet.service'
 import { ArrowDownLeft, Ticket, CheckCircle2 } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -10,6 +10,7 @@ export default function DepositPage() {
   const [successData, setSuccessData] = useState<{ amount: number; code: string } | null>(null)
   const [loadingStep, setLoadingStep] = useState(0)
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const loadingSteps = [
     'Validating coupon code...',
@@ -23,6 +24,7 @@ export default function DepositPage() {
     onSuccess: (r) => {
       setSuccessData({ amount: r.data.data.amount, code: code })
       setCode('')
+      queryClient.invalidateQueries({ queryKey: ['wallet'] })
     },
     onError: (err: any) => toast.error(err.response?.data?.error || 'Redemption failed'),
   })
