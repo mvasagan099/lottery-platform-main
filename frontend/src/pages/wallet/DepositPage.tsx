@@ -1,23 +1,44 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { walletService } from '@/services/wallet.service'
-import { ArrowDownLeft, Ticket } from 'lucide-react'
+import { ArrowDownLeft, Ticket, CheckCircle2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 
 export default function DepositPage() {
   const [code, setCode] = useState('')
+  const [successData, setSuccessData] = useState<{ amount: number; code: string } | null>(null)
+  const [loadingStep, setLoadingStep] = useState(0)
   const navigate = useNavigate()
+
+  const loadingSteps = [
+    'Validating coupon code...',
+    'Checking database entries...',
+    'Securing ledger transactions...',
+    'Crediting coins to your balance...'
+  ]
 
   const mutation = useMutation({
     mutationFn: () => walletService.redeemCoupon(code),
     onSuccess: (r) => {
-      toast.success(`Redeemed successfully! Added ${r.data.data.amount} Coins to your wallet.`)
+      setSuccessData({ amount: r.data.data.amount, code: code })
       setCode('')
-      setTimeout(() => navigate('/wallet'), 2000)
     },
     onError: (err: any) => toast.error(err.response?.data?.error || 'Redemption failed'),
   })
+
+  useEffect(() => {
+    let interval: any
+    if (mutation.isPending) {
+      setLoadingStep(0)
+      interval = setInterval(() => {
+        setLoadingStep((prev) => (prev + 1) % loadingSteps.length)
+      }, 1500)
+    } else {
+      setLoadingStep(0)
+    }
+    return () => clearInterval(interval)
+  }, [mutation.isPending])
 
   return (
     <div className="page-wrapper section">
@@ -70,6 +91,80 @@ export default function DepositPage() {
           </div>
         </div>
       </div>
+
+      {/* Loading Overlay Screen */}
+      {mutation.isPending && (
+        <div className="coupon-loading-overlay">
+          <div className="coupon-loading-card">
+            <div className="spinner-container-outer">
+              <div className="double-ring-spinner" />
+              <Ticket size={36} className="spinner-icon-inner" />
+            </div>
+            <h3 className="loading-step-text">
+              {loadingSteps[loadingStep]}
+            </h3>
+            <p className="loading-subtext">Please don't close this page or press back.</p>
+          </div>
+        </div>
+      )}
+
+      {/* Success Modal Overlay Window */}
+      {successData && (
+        <div className="coupon-success-overlay">
+          <div className="coupon-success-card">
+            <div className="sparkle-container">
+              <div className="success-sparkle success-sparkle-1" />
+              <div className="success-sparkle success-sparkle-2" />
+              <div className="success-sparkle success-sparkle-3" />
+              <div className="success-sparkle success-sparkle-4" />
+              <div className="success-sparkle success-sparkle-5" />
+            </div>
+            
+            <div className="success-icon-wrapper">
+              <CheckCircle2 size={40} />
+            </div>
+            
+            <h2 className="coupon-success-title">Redeemed Successfully!</h2>
+            
+            <p className="coupon-success-desc">
+              Your promotional code has been accepted.
+            </p>
+
+            <div style={{ margin: '8px 0' }}>
+              <span className="coupon-code-badge">
+                <Ticket size={16} />
+                {successData.code.toUpperCase()}
+              </span>
+            </div>
+
+            <div>
+              <div className="coupon-success-amount">
+                +{successData.amount.toFixed(2)} Coins
+              </div>
+            </div>
+
+            <p className="loading-subtext">
+              Funds have been added to your wallet balance.
+            </p>
+
+            <div style={{ display: 'flex', gap: '12px', width: '100%', marginTop: '12px' }}>
+              <button
+                className="btn btn-outline btn-full"
+                onClick={() => setSuccessData(null)}
+              >
+                Redeem Another
+              </button>
+              <button
+                className="btn btn-gold btn-full"
+                onClick={() => navigate('/wallet')}
+              >
+                Go to Wallet
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
+
