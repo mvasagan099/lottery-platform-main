@@ -28,7 +28,7 @@ export const walletService = {
     totp?: string
   }) => api.post<ApiResponse>('/wallet/withdraw', payload),
 
-  redeemCoupon: (code: string) => api.post<ApiResponse<any>>('/wallet/redeem', { code }),
+  redeemCoupon: (code: string) => api.post<ApiResponse<any>>('/wallet/redeem', { code }, { timeout: 60000 }),
 
   transferToCouponWallet: (amount: number, totp?: string) => api.post<ApiResponse<any>>('/wallet/transfer', { amount, totp }),
 }
