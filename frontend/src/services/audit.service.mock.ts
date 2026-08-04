@@ -50,7 +50,7 @@ const generateMockLogs = (count: number): AuditLog[] => {
       action,
       resource: `${module.toLowerCase()}_${Math.floor(Math.random() * 100)}`,
       ipAddress: `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
-      country: ['US', 'AU', 'GB', 'DE', 'FR'][Math.floor(Math.random() * 5)],
+      country: ['US', 'AU', 'GB', 'IN', 'AE'][Math.floor(Math.random() * 5)],
       browser: ['Chrome', 'Firefox', 'Safari', 'Edge'][Math.floor(Math.random() * 4)],
       os: ['Windows', 'macOS', 'Linux', 'iOS', 'Android'][Math.floor(Math.random() * 5)],
       device: ['Desktop', 'Mobile', 'Tablet'][Math.floor(Math.random() * 3)],

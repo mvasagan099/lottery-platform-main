@@ -51,10 +51,13 @@ export default function KYCPage() {
   
   const getDocumentOptions = () => {
     if (!user?.country) return COUNTRY_DOCUMENTS.DEFAULT
-    const key = Object.keys(COUNTRY_DOCUMENTS).find(
-      k => k.toLowerCase() === user.country.toLowerCase()
-    )
-    return key ? COUNTRY_DOCUMENTS[key] : COUNTRY_DOCUMENTS.DEFAULT
+    const c = user.country.toUpperCase().trim()
+    if (c === 'IN' || c === 'INDIA') return COUNTRY_DOCUMENTS.India
+    if (c === 'GB' || c === 'UK' || c === 'UNITED KINGDOM') return COUNTRY_DOCUMENTS['United Kingdom']
+    if (c === 'US' || c === 'USA' || c === 'UNITED STATES') return COUNTRY_DOCUMENTS['United States']
+    if (c === 'AE' || c === 'UAE' || c === 'UNITED ARAB EMIRATES') return COUNTRY_DOCUMENTS.UAE
+    if (c === 'AU' || c === 'AUS' || c === 'AUSTRALIA') return COUNTRY_DOCUMENTS.Australia
+    return COUNTRY_DOCUMENTS.DEFAULT
   }
 
   const docOptions = getDocumentOptions()

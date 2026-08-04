@@ -706,7 +706,14 @@ export default async function walletRoutes(app: FastifyInstance) {
     if (!wallet) return reply.status(404).send({ success: false, error: 'Wallet not found' })
 
     const user = await prisma.user.findUnique({ where: { id: userId }, select: { country: true } })
-    const userCountry = user?.country || null
+    const rawCountry = user?.country || null
+    const userCountry = rawCountry ? (rawCountry.trim().length === 2 ? rawCountry.trim().toUpperCase() : (
+      rawCountry.trim().toUpperCase() === 'UNITED STATES' || rawCountry.trim().toUpperCase() === 'USA' ? 'US' :
+      rawCountry.trim().toUpperCase() === 'INDIA' || rawCountry.trim().toUpperCase() === 'IND' ? 'IN' :
+      rawCountry.trim().toUpperCase() === 'AUSTRALIA' || rawCountry.trim().toUpperCase() === 'AUS' ? 'AU' :
+      rawCountry.trim().toUpperCase() === 'UNITED KINGDOM' || rawCountry.trim().toUpperCase() === 'UK' ? 'GB' :
+      rawCountry.trim().toUpperCase() === 'CANADA' ? 'CA' : rawCountry.trim().toUpperCase().substring(0, 2)
+    )) : null
 
     const codeUpper = body.code.trim().toUpperCase()
 

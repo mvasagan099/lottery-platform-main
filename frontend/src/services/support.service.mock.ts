@@ -29,7 +29,7 @@ const generateMockTickets = (count: number): SupportTicket[] => {
       userId: `usr_${Math.floor(Math.random() * 1000)}`,
       username: `user_${Math.floor(Math.random() * 1000)}`,
       userEmail: `user${Math.floor(Math.random() * 1000)}@example.com`,
-      userCountry: ['US', 'AU', 'GB', 'DE', 'FR'][Math.floor(Math.random() * 5)],
+      userCountry: ['US', 'AU', 'GB', 'IN', 'AE'][Math.floor(Math.random() * 5)],
       userVipLevel: Math.random() > 0.8 ? 'Platinum' : 'Standard',
       userKycStatus: Math.random() > 0.1 ? 'VERIFIED' : 'PENDING',
       assignedAgentId: agent ? `agent_${agent.replace(' ', '').toLowerCase()}` : undefined,
