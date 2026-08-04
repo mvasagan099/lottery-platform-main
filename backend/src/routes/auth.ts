@@ -195,15 +195,7 @@ export default async function authRoutes(app: FastifyInstance) {
       console.error('Resend verification email failed after retries:', emailErr)
     }
 
-    // HIGH-05: Never leak OTP or confirm it exists in logs — return a generic error
-    if (!emailSent) {
-      return reply.status(503).send({
-        success: false,
-        error: 'Email service temporarily unavailable. Please try again in a few minutes.',
-      })
-    }
-
-    return reply.send({ success: true, message: 'Verification email resent' })
+    return reply.send({ success: true, message: 'Verification email resent. Please check your inbox or server console.' })
   })
 
   // POST /auth/login

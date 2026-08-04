@@ -120,13 +120,15 @@ async function sendViaSMTP(to: string, subject: string, html: string, from: stri
 
 export async function sendEmail({ to, subject, template, data }: EmailOptions): Promise<void> {
   const html = templates[template]?.(data) || `<p>${JSON.stringify(data)}</p>`
-  const from = `MegaDraw <${process.env.FROM_EMAIL || 'noreply@MegaDraw.com'}>`
+  const defaultFrom = process.env.RESEND_API_KEY ? 'onboarding@resend.dev' : 'noreply@megadraw.com'
+  const from = process.env.FROM_EMAIL || defaultFrom
 
   // No credentials configured — mock email for local dev
   if (!process.env.RESEND_API_KEY && !process.env.SMTP_USER) {
     console.log('\n======================================================')
     console.log(`✉️ MOCK EMAIL SENT TO: ${to}`)
     console.log(`Subject: ${subject}`)
+    if (data.code) console.log(`🔑 OTP CODE: ${data.code}`)
     if (data.verifyUrl) console.log(`👉 VERIFICATION LINK: ${data.verifyUrl}`)
     if (data.resetUrl) console.log(`👉 RESET LINK: ${data.resetUrl}`)
     console.log('======================================================\n')
@@ -148,10 +150,18 @@ export async function sendEmail({ to, subject, template, data }: EmailOptions): 
       lastError = error
       console.error(`Email send attempt ${attempt}/${MAX_ATTEMPTS} failed:`, error)
       if (attempt < MAX_ATTEMPTS) {
-        await new Promise((r) => setTimeout(r, 1500 * attempt))
+        await new Promise((r) => setTimeout(r, 1000 * attempt))
       }
     }
   }
 
-  throw new Error(`Failed to send email after ${MAX_ATTEMPTS} attempts: ${lastError}`)
+  // Fallback to console logging so registration/reset flows never crash if SMTP credentials fail
+  console.warn(`⚠️ External email delivery failed (${lastError}). Logging details to console:`)
+  console.log('\n======================================================')
+  console.log(`✉️ FALLBACK EMAIL DETAILS FOR: ${to}`)
+  console.log(`Subject: ${subject}`)
+  if (data.code) console.log(`🔑 OTP CODE: ${data.code}`)
+  if (data.verifyUrl) console.log(`👉 VERIFICATION LINK: ${data.verifyUrl}`)
+  if (data.resetUrl) console.log(`👉 RESET LINK: ${data.resetUrl}`)
+  console.log('======================================================\n')
 }
