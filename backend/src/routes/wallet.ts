@@ -705,6 +705,9 @@ export default async function walletRoutes(app: FastifyInstance) {
     const wallet = await prisma.wallet.findUnique({ where: { userId } })
     if (!wallet) return reply.status(404).send({ success: false, error: 'Wallet not found' })
 
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: { country: true } })
+    const userCountry = user?.country || null
+
     const codeUpper = body.code.trim().toUpperCase()
 
     // STEP 1: Verify coupon exists and is valid (read-only, does not lock)
@@ -718,7 +721,8 @@ export default async function walletRoutes(app: FastifyInstance) {
       body: JSON.stringify({
         couponCode: codeUpper,
         userId: userId,
-        gameId: 'lottery-platform'
+        gameId: 'lottery-platform',
+        userCountry: userCountry
       })
     })
 
@@ -734,6 +738,20 @@ export default async function walletRoutes(app: FastifyInstance) {
         success: false,
         code: verifyData.code || 'INVALID_COUPON',
         error: verifyData.message || 'Failed to verify coupon'
+      })
+    }
+
+    // Country match guard
+    if (
+      userCountry &&
+      verifyData.countryCode &&
+      verifyData.countryCode.trim() !== '' &&
+      verifyData.countryCode.trim().toUpperCase() !== userCountry.trim().toUpperCase()
+    ) {
+      return reply.status(400).send({
+        success: false,
+        code: 'COUNTRY_MISMATCH',
+        error: `Country mismatch: This coupon was issued for ${verifyData.countryCode.trim().toUpperCase()} and cannot be redeemed by an account in ${userCountry.trim().toUpperCase()}`
       })
     }
 
@@ -765,6 +783,7 @@ export default async function walletRoutes(app: FastifyInstance) {
         walletTransactionId,  // Required by coupon server for idempotency tracking
         ipAddress: request.ip,
         device: request.headers['user-agent'] || 'unknown',
+        userCountry: userCountry,
       })
     })
 
