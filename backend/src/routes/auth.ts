@@ -144,11 +144,14 @@ export default async function authRoutes(app: FastifyInstance) {
       console.error('Verification email failed after retries:', emailErr)
     }
 
+    const isDev = !process.env.RESEND_API_KEY && !process.env.SMTP_USER
+
     return reply.status(201).send({
       success: true,
       message: emailSent
-        ? 'OTP sent. Please check your email to verify your account.'
+        ? (isDev ? `OTP sent. (Dev Code: ${otp})` : 'OTP sent. Please check your email to verify your account.')
         : 'We had trouble sending the verification email. Please try resending the code.',
+      devOtp: isDev ? otp : undefined,
       data: {
         email: body.email,
         username: body.username,
@@ -177,7 +180,6 @@ export default async function authRoutes(app: FastifyInstance) {
     const otp = randomInt(100000, 999999).toString()
     await redis.setex(`email_verify:${email}`, 300, otp) // 5m TTL
 
-
     let emailSent = true
     try {
       await sendEmail({
@@ -195,7 +197,13 @@ export default async function authRoutes(app: FastifyInstance) {
       console.error('Resend verification email failed after retries:', emailErr)
     }
 
-    return reply.send({ success: true, message: 'Verification email resent. Please check your inbox or server console.' })
+    const isDev = !process.env.RESEND_API_KEY && !process.env.SMTP_USER
+
+    return reply.send({
+      success: true,
+      message: isDev ? `Verification code resent. (Dev Code: ${otp})` : 'Verification email resent. Please check your inbox.',
+      devOtp: isDev ? otp : undefined,
+    })
   })
 
   // POST /auth/login

@@ -73,9 +73,15 @@ export default function RegisterPage() {
 
   const mutation = useMutation({
     mutationFn: (data: Omit<FormData, 'confirmPassword' | 'terms'>) => authService.register(data as any),
-    onSuccess: (_, variables) => {
+    onSuccess: (res: any, variables) => {
       setRegisteredEmail(variables.email)
-      toast.success('Account created! Please check your email for the OTP.')
+      const devOtp = res.data?.devOtp
+      if (devOtp) {
+        setOtp(devOtp)
+        toast.success(`Verification Code: ${devOtp}`, { duration: 10000 })
+      } else {
+        toast.success(res.data?.message || 'OTP sent! Please check your email.')
+      }
       setStep(3)
     },
     onError: (err: any) => {
@@ -96,7 +102,15 @@ export default function RegisterPage() {
 
   const resendMutation = useMutation({
     mutationFn: () => authService.resendVerification(registeredEmail),
-    onSuccess: () => toast.success('Verification email resent!'),
+    onSuccess: (res: any) => {
+      const devOtp = res.data?.devOtp
+      if (devOtp) {
+        setOtp(devOtp)
+        toast.success(`New Code: ${devOtp}`, { duration: 10000 })
+      } else {
+        toast.success('Verification email resent!')
+      }
+    },
     onError: (err: any) => toast.error(err.response?.data?.error || 'Failed to resend email')
   })
 
