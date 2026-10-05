@@ -42,8 +42,13 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 
 EXPOSE 3001
 
+# Entrypoint script for automatic database migrations
+COPY docker/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
 # MED-07: Run as non-root user
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["node", "backend/dist/server.js"]

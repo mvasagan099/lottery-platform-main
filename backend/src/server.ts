@@ -82,6 +82,17 @@ async function buildApp() {
     crossOriginResourcePolicy: { policy: 'cross-origin' },
   })
 
+  // Support both direct route access and /api/* prefixed access seamlessly
+  app.addHook('onRequest', async (req) => {
+    if (req.raw.url) {
+      if (req.raw.url === '/api') {
+        req.raw.url = '/'
+      } else if (req.raw.url.startsWith('/api/')) {
+        req.raw.url = req.raw.url.slice(4)
+      }
+    }
+  })
+
   // CRIT-06: Strict CORS — never reflect all origins in production
   const allowedOrigins = process.env.NODE_ENV === 'production'
     ? (process.env.ALLOWED_ORIGINS || 'https://megadraw.com,https://lottery-frontend-xpxd.onrender.com').split(',')

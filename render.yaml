@@ -1,51 +1,69 @@
-services:
-  # ── Coupon API (Express / Node) ───────────────────────────────────────────────
-  - type: web
-    name: coupon-api
-    env: node
+databases:
+  - name: lottery-postgres
+    databaseName: lottery_db
+    user: lottery_user
     plan: free
-    rootDir: server
-    buildCommand: npm install
-    startCommand: npx tsx index.ts
+
+services:
+  # ── Backend API (Docker Web Service) ─────────────────────────────────────────
+  - type: web
+    name: lottery-backend
+    env: docker
+    plan: free
+    dockerfilePath: backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: "4000"
-      - key: SUPABASE_URL
+        value: "3001"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lottery-postgres
+          property: connectionString
+      - key: REDIS_URL
         sync: false
-      - key: SUPABASE_SERVICE_KEY
-        sync: false
-      # API key used by lottery-platform backend to call this service
-      - key: API_KEY
-        sync: false
-      # Comma-separated list of allowed frontend origins
-      # e.g. https://coupon-frontend-xxxx.onrender.com,https://yourdomain.com
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
       - key: ALLOWED_ORIGINS
         sync: false
-      # URL of this service's frontend (used in emails etc.)
       - key: FRONTEND_URL
         sync: false
-      # MegaDraw lottery platform integration
-      - key: LOTTERY_API_URL
+      - key: FROM_EMAIL
+        value: noreply@megadraw.com
+      - key: SMTP_HOST
         sync: false
-      - key: LOTTERY_API_KEY
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_SECRET
         sync: false
 
-  # ── Coupon Frontend Static Site ───────────────────────────────────────────────
+  # ── Frontend (Static Site) ──────────────────────────────────────────────────
   - type: web
-    name: coupon-frontend
+    name: lottery-frontend
     env: static
+    rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
     pullRequestPreviewsEnabled: false
     routes:
-      # SPA fallback — all non-asset paths serve index.html
       - type: rewrite
         source: /*
         destination: /index.html
     headers:
-      # Hashed Vite assets get 1-year immutable cache
       - path: /assets/*
         name: Cache-Control
         value: public, max-age=31536000, immutable
@@ -62,14 +80,13 @@ services:
         name: Permissions-Policy
         value: "camera=(), microphone=(), geolocation=(), payment=()"
     envVars:
-      # Supabase project URL and anon key (public — safe to expose)
+      - key: VITE_API_URL
+        sync: false
+      - key: VITE_WS_URL
+        sync: false
       - key: VITE_SUPABASE_URL
         sync: false
       - key: VITE_SUPABASE_ANON_KEY
         sync: false
-      # Payment gateway public key (PayPal is the only supported deposit method)
       - key: VITE_PAYPAL_CLIENT_ID
-        sync: false
-      # Coupon API backend URL
-      - key: VITE_API_URL
         sync: false

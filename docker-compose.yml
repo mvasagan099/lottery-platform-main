@@ -13,7 +13,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in your environment. Never use a default.}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - lottery_net
     healthcheck:
@@ -42,8 +41,8 @@ services:
   # Backend API (Fastify)
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./backend/Dockerfile
     container_name: lottery_backend
     restart: unless-stopped
     environment:

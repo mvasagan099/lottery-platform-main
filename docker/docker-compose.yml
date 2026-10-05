@@ -43,8 +43,8 @@ services:
   # Backend API (Fastify)
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: backend/Dockerfile
     container_name: lottery_backend
     restart: unless-stopped
     environment:
