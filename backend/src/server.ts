@@ -202,7 +202,7 @@ async function buildApp() {
   app.setErrorHandler(async (error, request, reply) => {
     request.log.error({ err: error, url: request.url, method: request.method })
 
-    if (error.validation || error.name === 'ZodError') {
+    if (error.validation || error.name === 'ZodError' || (error as any).issues) {
       return reply.status(400).send({
         success: false,
         error: 'Validation Error',

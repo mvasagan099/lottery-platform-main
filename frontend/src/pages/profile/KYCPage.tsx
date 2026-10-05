@@ -112,7 +112,7 @@ export default function KYCPage() {
       await api.post('/users/me/kyc', {
         documentType: docType,
         documentUrl: frontUrl,
-        selfieUrl: backUrl || 'selfie.jpg' // Using selfieUrl for back image as a workaround if the API doesn't support backUrl yet
+        selfieUrl: backUrl || undefined
       })
       
       setIsUploading(false)

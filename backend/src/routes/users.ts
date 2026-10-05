@@ -19,9 +19,9 @@ const safeHttpsUrl = z.string().url().refine(
 )
 
 const kycSchema = z.object({
-  documentType: z.enum(['PASSPORT', 'DRIVERS_LICENSE', 'NATIONAL_ID', 'UTILITY_BILL']),
+  documentType: z.string().min(1).max(50),
   documentUrl: safeHttpsUrl,
-  selfieUrl: safeHttpsUrl,
+  selfieUrl: safeHttpsUrl.optional().nullable().or(z.literal('')),
 })
 
 // HIGH-02: Whitelist notification preference fields
@@ -140,7 +140,7 @@ export default async function userRoutes(app: FastifyInstance) {
         userId: request.user.userId,
         documentType,
         documentUrl,
-        selfieUrl,
+        selfieUrl: selfieUrl || null,
         status: 'PENDING',
       },
     })
