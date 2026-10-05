@@ -49,6 +49,10 @@ export const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379'
   lazyConnect: true,
 })
 
+redis.on('error', (err) => {
+  console.error('[Redis Error]', err.message || err)
+})
+
 // Build Fastify app
 async function buildApp() {
   const app = Fastify({
