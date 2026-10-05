@@ -28,11 +28,12 @@ export default function SupabaseImageUpload({ value, onChange, folderPath }: Sup
       };
       const compressedFile = await imageCompression(file, options);
       
-      const fileName = `${folderPath}/${Date.now()}_${compressedFile.name}`;
+      const ext = compressedFile.name.split('.').pop()?.replace(/[^a-zA-Z0-9]/g, '') || 'jpg';
+      const fileName = `${folderPath}/${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
       
       const { data, error } = await supabase.storage
         .from(import.meta.env.VITE_SUPABASE_BUCKET_NAME || 'uploads')
-        .upload(fileName, file);
+        .upload(fileName, compressedFile, { upsert: true });
 
       if (error) {
         throw error;

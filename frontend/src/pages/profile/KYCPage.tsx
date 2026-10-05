@@ -89,8 +89,9 @@ export default function KYCPage() {
       
       // Compress and upload front file
       const compressedFront = await imageCompression(frontFile, compressionOptions)
-      const frontName = `${user?.id}/${Date.now()}_front_${compressedFront.name}`
-      const { error: frontError } = await supabase.storage.from(bucketName).upload(frontName, compressedFront)
+      const frontExt = compressedFront.name.split('.').pop()?.replace(/[^a-zA-Z0-9]/g, '') || 'jpg'
+      const frontName = `${user?.id || 'user'}/${Date.now()}_front_${Math.random().toString(36).substring(2, 8)}.${frontExt}`
+      const { error: frontError } = await supabase.storage.from(bucketName).upload(frontName, compressedFront, { upsert: true })
       if (frontError) throw frontError
       const { data: { publicUrl: frontUrl } } = supabase.storage.from(bucketName).getPublicUrl(frontName)
 
@@ -98,8 +99,9 @@ export default function KYCPage() {
       let backUrl = ''
       if (backFile) {
         const compressedBack = await imageCompression(backFile, compressionOptions)
-        const backName = `${user?.id}/${Date.now()}_back_${compressedBack.name}`
-        const { error: backError } = await supabase.storage.from(bucketName).upload(backName, compressedBack)
+        const backExt = compressedBack.name.split('.').pop()?.replace(/[^a-zA-Z0-9]/g, '') || 'jpg'
+        const backName = `${user?.id || 'user'}/${Date.now()}_back_${Math.random().toString(36).substring(2, 8)}.${backExt}`
+        const { error: backError } = await supabase.storage.from(bucketName).upload(backName, compressedBack, { upsert: true })
         if (backError) throw backError
         const { data: { publicUrl: bUrl } } = supabase.storage.from(bucketName).getPublicUrl(backName)
         backUrl = bUrl
