@@ -20,12 +20,19 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
     // Verify session is still active
     const session = await prisma.session.findUnique({
       where: { id: request.user.sessionId },
-      select: { isActive: true, expiresAt: true },
+      select: { isActive: true, expiresAt: true, userId: true,
+        user: { select: { status: true, role: true } } },
     })
 
-    if (!session?.isActive || session.expiresAt < new Date()) {
+    if (!session?.isActive || session.expiresAt <= new Date() || session.userId !== request.user.userId) {
       return reply.status(401).send({ success: false, error: 'Session expired' })
     }
+
+    if (session.user.status === 'SUSPENDED' || session.user.status === 'BANNED') {
+      return reply.status(403).send({ success: false, error: 'Account suspended' })
+    }
+    // Authorization must follow current database privileges, not stale JWT claims.
+    request.user.role = session.user.role
 
     // Update last used
     await prisma.session.update({

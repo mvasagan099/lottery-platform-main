@@ -8,6 +8,8 @@ import { z } from 'zod'
 import { prisma, redis } from '../server'
 import { authenticate, requireAdmin, requireVerifiedEmail, auditLog } from '../middleware/auth'
 import { processAffiliateCommission } from '../services/affiliate'
+import { randomUUID } from 'crypto'
+import { submitCouponTransfer } from '../services/couponTransfer'
 
 const depositSchema = z.object({
   amount: z.number().positive(),
@@ -508,7 +510,16 @@ export default async function walletRoutes(app: FastifyInstance) {
       })
     }
 
-    const transactionId = `TRF-${userId.substring(0, 8)}-${Date.now()}`
+    const couponApiKey = process.env.COUPON_API_KEY
+    let transferUrl: string
+    try {
+      const url = new URL(`${process.env.COUPON_API_URL}/wallet/transfer`)
+      if (!couponApiKey || (url.protocol !== 'https:' && process.env.NODE_ENV !== 'development')) throw new Error()
+      transferUrl = url.toString()
+    } catch {
+      return reply.status(503).send({ success: false, error: 'Transfers are temporarily unavailable' })
+    }
+    const transactionId = `TRF-${randomUUID()}`
 
     // 1. Deduct from game wallet FIRST to ensure funds exist and lock them
     try {
@@ -543,6 +554,7 @@ export default async function walletRoutes(app: FastifyInstance) {
             balanceAfter: balBefore - body.amount,
             reference: transactionId,
             description: 'Transfer to Coupon Wallet',
+            metadata: { kind: 'COUPON_TRANSFER', userEmail: user.email },
           },
         })
       })
@@ -551,65 +563,24 @@ export default async function walletRoutes(app: FastifyInstance) {
       return reply.status(400).send({ success: false, error: 'Insufficient balance or wallet error.' })
     }
 
-    const refundWallet = async () => {
-      try {
-        await prisma.$transaction(async (tx) => {
-          await tx.wallet.update({
-            where: { id: wallet.id },
-            data: {
-              balance: { increment: body.amount },
-              totalWithdrawn: { decrement: body.amount },
-            },
-          })
-          await tx.transaction.updateMany({
-            where: { reference: transactionId },
-            data: { status: 'FAILED' }
-          })
-        })
-      } catch (refundErr) {
-        console.error('CRITICAL: Failed to refund wallet after Coupon API failure', { userId, transactionId, refundErr })
-      }
-    }
-
-    // 2. Send authenticated request to Coupon Platform
-    const transferUrl = `${process.env.COUPON_API_URL}/wallet/transfer`
-    const transferRes = await fetch(transferUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.COUPON_API_KEY || ''
-      },
-      body: JSON.stringify({
-        userId: userId,
-        userEmail: user.email,
-        amount: body.amount,
-        transactionId: transactionId
-      })
+    // Keep a durable pending record for all ambiguous outcomes. Never refund
+    // merely because an acknowledgement was lost after the provider credited.
+    const outcome = await submitCouponTransfer(transferUrl, couponApiKey, {
+      userId, userEmail: user.email, amount: body.amount, transactionId,
     })
-
-    let transferData;
-    try {
-      transferData = await transferRes.json();
-    } catch (e) {
-      console.error('Failed to parse Coupon API response:', transferRes.status);
-      await refundWallet();
-      return reply.status(502).send({ success: false, error: 'Bad Gateway: Coupon API returned invalid response.' });
-    }
-
-    // Handle idempotency (409 Conflict) or failure
-    if (!transferRes.ok && transferRes.status !== 409) {
-      console.error('Transfer to Coupon Wallet failed:', transferData)
-      await refundWallet();
-      return reply.status(400).send({
-        success: false,
-        error: transferData.message || 'Failed to transfer to Coupon Wallet',
-        code: transferData.code || 'TRANSFER_FAILED'
+    if (outcome === 'PENDING') {
+      await auditLog(userId, 'WALLET_TRANSFER_PENDING', 'Transaction', transactionId,
+        undefined, { amount: body.amount }, request)
+      return reply.status(202).send({
+        success: true,
+        message: 'Transfer pending confirmation. Your funds are reserved; please do not submit it again.',
+        data: { transactionId, amount: body.amount, status: 'PENDING' },
       })
     }
 
     // 3. Mark transaction as COMPLETED
     await prisma.transaction.updateMany({
-      where: { reference: transactionId },
+      where: { reference: transactionId, status: 'PENDING' },
       data: { status: 'COMPLETED' }
     })
 
@@ -627,8 +598,41 @@ export default async function walletRoutes(app: FastifyInstance) {
     return reply.status(200).send({
       success: true,
       message: 'Transfer to Coupon Wallet successful.',
-      data: { transactionId, amount: body.amount }
+      data: { transactionId, amount: body.amount, status: 'COMPLETED' }
     })
+  })
+
+  // Admin reconciliation only after checking the provider's ledger. A unique
+  // conditional transition makes concurrent resolutions/refunds idempotent.
+  app.post('/transfers/:reference/resolve', { preHandler: [authenticate, requireAdmin] }, async (request, reply) => {
+    const { reference } = request.params as { reference: string }
+    const resolution = z.object({
+      outcome: z.enum(['COMPLETED', 'FAILED']),
+      providerReference: z.string().min(1).max(200),
+      notes: z.string().min(10).max(1000),
+    }).strict().parse(request.body)
+    await prisma.$transaction(async (tx) => {
+      const transfer = await tx.transaction.findUnique({ where: { reference } })
+      if (!transfer || (transfer.metadata as any)?.kind !== 'COUPON_TRANSFER') {
+        throw Object.assign(new Error('Transfer not found'), { statusCode: 404 })
+      }
+      const { count } = await tx.transaction.updateMany({
+        where: { id: transfer.id, status: 'PENDING' },
+        data: { status: resolution.outcome,
+          metadata: { ...(transfer.metadata as object), ...resolution, resolvedBy: request.user.userId } },
+      })
+      if (!count) throw Object.assign(new Error('Transfer already resolved'), { statusCode: 409 })
+      if (resolution.outcome === 'FAILED') {
+        await tx.wallet.update({ where: { id: transfer.walletId }, data: {
+          balance: { increment: transfer.amount }, totalWithdrawn: { decrement: transfer.amount },
+        } })
+      }
+      await tx.auditLog.create({ data: { userId: request.user.userId,
+        action: 'COUPON_TRANSFER_RESOLVED', resource: 'Transaction', resourceId: transfer.id,
+        newValues: resolution, ipAddress: request.ip, userAgent: request.headers['user-agent'],
+      } })
+    })
+    return reply.send({ success: true, message: 'Transfer resolved' })
   })
 
   // GET /wallet/deposits - Deposit history

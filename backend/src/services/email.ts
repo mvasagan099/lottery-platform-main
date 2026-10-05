@@ -123,8 +123,11 @@ export async function sendEmail({ to, subject, template, data }: EmailOptions): 
   const defaultFrom = process.env.RESEND_API_KEY ? 'onboarding@resend.dev' : 'noreply@megadraw.com'
   const from = process.env.FROM_EMAIL || defaultFrom
 
-  // No credentials configured — mock email for local dev
+  // Mock delivery is available only in explicit local development.
   if (!process.env.RESEND_API_KEY && !process.env.SMTP_USER) {
+    if (process.env.NODE_ENV !== 'development') {
+      throw new Error('Email delivery is not configured')
+    }
     console.log('\n======================================================')
     console.log(`✉️ MOCK EMAIL SENT TO: ${to}`)
     console.log(`Subject: ${subject}`)
@@ -155,13 +158,6 @@ export async function sendEmail({ to, subject, template, data }: EmailOptions): 
     }
   }
 
-  // Fallback to console logging so registration/reset flows never crash if SMTP credentials fail
-  console.warn(`⚠️ External email delivery failed (${lastError}). Logging details to console:`)
-  console.log('\n======================================================')
-  console.log(`✉️ FALLBACK EMAIL DETAILS FOR: ${to}`)
-  console.log(`Subject: ${subject}`)
-  if (data.code) console.log(`🔑 OTP CODE: ${data.code}`)
-  if (data.verifyUrl) console.log(`👉 VERIFICATION LINK: ${data.verifyUrl}`)
-  if (data.resetUrl) console.log(`👉 RESET LINK: ${data.resetUrl}`)
-  console.log('======================================================\n')
+  // Never leak OTPs or reset links to production logs after delivery failure.
+  throw new Error('Email delivery failed', { cause: lastError })
 }

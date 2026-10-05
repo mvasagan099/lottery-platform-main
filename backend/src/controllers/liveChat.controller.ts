@@ -4,23 +4,13 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 export const connectedClients = new Map<string, any>();
 
 export class LiveChatController {
-  static handleConnection(connection: any, request: FastifyRequest) {
-    // Authenticate user via token from query param or header
-    // In a real app we'd decode JWT here
-    const token = (request.query as any).token;
-    
-    if (!token) {
-      connection.socket.close(1008, 'Unauthorized');
-      return;
-    }
+  static handleConnection(socket: any, request: FastifyRequest) {
+    // The inherited admin preHandler authenticates the upgrade request.
+    const userId = request.user.userId;
 
-    // For demonstration, we assume token is the user ID
-    // or we'd verify it: const decoded = app.jwt.verify(token);
-    const userId = token; 
+    connectedClients.set(userId, socket);
 
-    connectedClients.set(userId, connection);
-
-    connection.socket.on('message', (message: Buffer) => {
+    socket.on('message', (message: Buffer) => {
       try {
         const data = JSON.parse(message.toString());
         
@@ -39,15 +29,15 @@ export class LiveChatController {
       }
     });
 
-    connection.socket.on('close', () => {
-      connectedClients.delete(userId);
+    socket.on('close', () => {
+      if (connectedClients.get(userId) === socket) connectedClients.delete(userId);
     });
   }
 
   static broadcastToUser(userId: string, data: any) {
     const conn = connectedClients.get(userId);
     if (conn) {
-      conn.socket.send(JSON.stringify(data));
+      conn.send(JSON.stringify(data));
     }
   }
 }

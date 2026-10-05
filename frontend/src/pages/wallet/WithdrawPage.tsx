@@ -19,8 +19,12 @@ export default function WithdrawPage() {
 
   const transferMutation = useMutation({
     mutationFn: () => walletService.transferToCouponWallet(Number(amount), totp),
-    onSuccess: () => {
-      toast.success('Transferred to Coupon Wallet successfully!')
+    onSuccess: (response) => {
+      if (response.data?.data?.status === 'PENDING') {
+        toast(response.data.message || 'Transfer pending confirmation. Please do not submit it again.')
+      } else {
+        toast.success('Transferred to Coupon Wallet successfully!')
+      }
       setAmount('')
       setTotp('')
     },
@@ -177,4 +181,3 @@ export default function WithdrawPage() {
     </div>
   )
 }
-

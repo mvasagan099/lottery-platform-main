@@ -1,6 +1,7 @@
 const { Client } = require('pg');
 async function run() {
-  const client = new Client({ connectionString: 'postgresql://lottery_user:secure_password@127.0.0.1:5434/lottery_db?schema=public' });
+  if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL must be set');
+  const client = new Client({ connectionString: process.env.DATABASE_URL });
   await client.connect();
   try {
     await client.query('CREATE DATABASE lottery_db_shadow');

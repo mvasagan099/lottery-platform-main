@@ -83,6 +83,7 @@ export default async function supportRoutes(app: FastifyInstance) {
         orderBy: { createdAt: 'desc' },
         include: {
           messages: {
+            where: { isInternal: false },
             orderBy: { createdAt: 'desc' },
             take: 1,
           },

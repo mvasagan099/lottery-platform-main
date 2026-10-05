@@ -8,6 +8,7 @@ import StarterKit from '@tiptap/starter-kit';
 import toast from 'react-hot-toast';
 import { api } from '../../../services/api';
 import { SupportTicket } from '../../../types/support';
+import { sanitizeSupportMessage } from '../../../lib/sanitizeSupportMessage';
 
 interface Props {
   ticket: SupportTicket | null;
@@ -253,7 +254,7 @@ export function TicketDetailsDrawer({ ticket, onClose }: Props) {
                         maxWidth: '80%',
                         fontSize: '14px',
                         lineHeight: '1.5'
-                      }} dangerouslySetInnerHTML={{ __html: msg.message || msg.content || '' }} />
+                      }} dangerouslySetInnerHTML={{ __html: sanitizeSupportMessage(msg.message || msg.content || '') }} />
                     </div>
                   ))
                 )}

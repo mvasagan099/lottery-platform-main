@@ -18,8 +18,10 @@ async function main() {
   console.log('🌱 Starting database seed...')
 
   // ── Admin User ───────────────────────────────────────────────────────────────
-  // Use environment variable if set, otherwise fallback to default for easier development
-  const adminPassword = process.env.ADMIN_SEED_PASSWORD || 'Admin@123456'
+  const adminPassword = process.env.ADMIN_SEED_PASSWORD
+  if (!adminPassword || adminPassword.length < 16 || adminPassword === 'Admin@123456') {
+    throw new Error('ADMIN_SEED_PASSWORD must be explicitly set to a strong password of at least 16 characters')
+  }
   
 
   const adminPasswordHash = await argon2.hash(adminPassword, {
@@ -563,7 +565,7 @@ async function main() {
 
   console.log('\n🎉 Seed completed successfully!')
   console.log('📧 Admin login: admin@megadraw.com')
-  console.log(`🔑 Admin password: ${process.env.ADMIN_SEED_PASSWORD ? '<set via environment>' : 'Admin@123456'}`)
+  console.log('Admin password configured through ADMIN_SEED_PASSWORD')
 }
 
 main()

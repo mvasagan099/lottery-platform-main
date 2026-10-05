@@ -119,8 +119,10 @@ export default async function authRoutes(app: FastifyInstance) {
       }
     }
 
-    // Store registration data in Redis (15 minutes TTL)
-    await redis.setex(`pending_reg:${body.email}`, 900, JSON.stringify(body))
+    // Never place the plaintext password in Redis or its snapshots.
+    const { password, ...registration } = body
+    const passwordHash = await hashPassword(password)
+    await redis.setex(`pending_reg:${body.email}`, 900, JSON.stringify({ ...registration, passwordHash }))
 
     // Send verification email
     const otp = randomInt(100000, 999999).toString()
@@ -144,14 +146,12 @@ export default async function authRoutes(app: FastifyInstance) {
       console.error('Verification email failed after retries:', emailErr)
     }
 
-    const isDev = !process.env.RESEND_API_KEY && !process.env.SMTP_USER
 
     return reply.status(201).send({
       success: true,
       message: emailSent
-        ? (isDev ? `OTP sent. (Dev Code: ${otp})` : 'OTP sent. Please check your email to verify your account.')
+        ? 'OTP sent. Please check your email to verify your account.'
         : 'We had trouble sending the verification email. Please try resending the code.',
-      devOtp: isDev ? otp : undefined,
       data: {
         email: body.email,
         username: body.username,
@@ -197,12 +197,10 @@ export default async function authRoutes(app: FastifyInstance) {
       console.error('Resend verification email failed after retries:', emailErr)
     }
 
-    const isDev = !process.env.RESEND_API_KEY && !process.env.SMTP_USER
 
     return reply.send({
       success: true,
-      message: isDev ? `Verification code resent. (Dev Code: ${otp})` : 'Verification email resent. Please check your inbox.',
-      devOtp: isDev ? otp : undefined,
+      message: emailSent ? 'Verification email resent. Please check your inbox.' : 'Email delivery failed. Please try again later.',
     })
   })
 
@@ -336,7 +334,7 @@ export default async function authRoutes(app: FastifyInstance) {
       'HttpOnly',
       isProd ? 'SameSite=None' : 'SameSite=Lax',
       isProd ? 'Secure' : '',
-      'Path=/auth/refresh',
+      'Path=/',
       `Max-Age=${30 * 24 * 60 * 60}`, // 30 days
     ].filter(Boolean).join('; ')
     reply.header('Set-Cookie', cookieOptions)
@@ -451,7 +449,7 @@ export default async function authRoutes(app: FastifyInstance) {
       'HttpOnly',
       isProd ? 'SameSite=None' : 'SameSite=Lax',
       isProd ? 'Secure' : '',
-      'Path=/auth/refresh',
+      'Path=/',
       'Max-Age=0',
     ].filter(Boolean).join('; ')
     reply.header('Set-Cookie', clearCookieOptions)
@@ -487,7 +485,6 @@ export default async function authRoutes(app: FastifyInstance) {
         data: {
           emailVerified: true,
           emailVerifiedAt: new Date(),
-          status: 'ACTIVE',
         },
       })
     } else {
@@ -508,8 +505,11 @@ export default async function authRoutes(app: FastifyInstance) {
         referrerId = referrer?.id
       }
 
-      // Hash password using the centralized helper (MED-4)
-      const passwordHash = await hashPassword(body.password)
+      if (!body.passwordHash || body.password) {
+        await redis.del(`pending_reg:${email}`)
+        return reply.status(400).send({ success: false, error: 'Please register again.' })
+      }
+      const passwordHash = body.passwordHash
 
       // Create user with wallet
       const newUser = await prisma.$transaction(async (tx) => {
@@ -573,7 +573,11 @@ export default async function authRoutes(app: FastifyInstance) {
       referrerId = referrer?.id
     }
 
-    const passwordHash = await hashPassword(body.password)
+    if (!body.passwordHash || body.password) {
+      await redis.del(`pending_reg:${email}`)
+      return reply.status(400).send({ success: false, error: 'Please register again.' })
+    }
+    const passwordHash = body.passwordHash
 
     const newUser = await prisma.$transaction(async (tx) => {
       const createdUser = await tx.user.create({

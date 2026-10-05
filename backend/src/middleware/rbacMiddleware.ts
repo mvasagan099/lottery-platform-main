@@ -16,7 +16,8 @@ export function requirePermission(module: string, action: string) {
 
       // Fetch the user's dynamic roles and their associated permissions
       const userMappings = await prisma.userRoleMapping.findMany({
-        where: { userId: user.userId },
+        where: { userId: user.userId,
+          OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] },
         include: {
           role: {
             include: {

@@ -1,5 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { prisma } from '../server';
+import { authenticate, requireAdmin, auditLog } from '../middleware/auth';
+import { parseSettings, settingsSchemas } from '../validators/settings.validator';
 
 // HIGH-04 FIX: Only these categories may be read publicly (no auth required).
 // Any other category key returns 403 regardless of auth status, preventing
@@ -12,23 +14,30 @@ export default async function settingsRoutes(app: FastifyInstance) {
   // Public endpoint for general settings, protected for others
   app.get<{ Params: { category: string } }>(
     '/:category',
+    { preHandler: async (request, reply) => {
+      if (!PUBLIC_CATEGORIES.has(request.params.category)) {
+        await authenticate(request, reply)
+        if (!reply.sent) await requireAdmin(request, reply)
+      }
+    } },
     async (request, reply) => {
       const { category } = request.params;
-
-      // HIGH-04: Enforce allow-list — return 403 for any non-public category.
-      if (!PUBLIC_CATEGORIES.has(category)) {
-        return reply.status(403).send({ success: false, message: 'Forbidden' })
-      }
 
       try {
         const setting = await prisma.systemSetting.findUnique({
           where: { category },
         });
 
-        // Default to empty object if not found
+        // Public responses expose only known display fields, never arbitrary
+        // values that might have been saved by older versions of the API.
+        const schema = Object.prototype.hasOwnProperty.call(settingsSchemas, category)
+          ? settingsSchemas[category as keyof typeof settingsSchemas] : undefined
+        const data = PUBLIC_CATEGORIES.has(category)
+          ? (schema ? schema.partial().strip().parse(setting?.data || {}) : {})
+          : setting?.data || {}
         return {
           success: true,
-          data: setting?.data || {},
+          data,
         };
       } catch (error) {
         request.log.error(error);
@@ -42,17 +51,11 @@ export default async function settingsRoutes(app: FastifyInstance) {
   app.put<{ Params: { category: string }; Body: any }>(
     '/:category',
     {
-      preValidation: async (request, reply) => {
-        await request.jwtVerify();
-        const user = request.user as any;
-        if (!['SUPER_ADMIN', 'ADMIN'].includes(user.role)) {
-          return reply.status(403).send({ success: false, message: 'Forbidden' });
-        }
-      }
+      preHandler: [authenticate, requireAdmin],
     },
     async (request, reply) => {
       const { category } = request.params;
-      const data = request.body;
+      const data = parseSettings(category, request.body);
       const user = request.user as any;
 
       try {
@@ -60,14 +63,15 @@ export default async function settingsRoutes(app: FastifyInstance) {
           where: { category },
           update: {
             data: data as any,
-            updatedBy: user.id,
+            updatedBy: user.userId,
           },
           create: {
             category,
             data: data as any,
-            updatedBy: user.id,
+            updatedBy: user.userId,
           },
         });
+        await auditLog(user.userId, 'SETTINGS_UPDATED', 'SystemSetting', category, undefined, data, request)
 
         return {
           success: true,

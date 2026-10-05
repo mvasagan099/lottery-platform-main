@@ -90,7 +90,8 @@ export default async function adminRoutes(app: FastifyInstance) {
 
     // 4. Check database for permission
     const userMappings = await prisma.userRoleMapping.findMany({
-      where: { userId: user.userId },
+      where: { userId: user.userId,
+        OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] },
       include: {
         role: {
           include: {
@@ -285,9 +286,11 @@ export default async function adminRoutes(app: FastifyInstance) {
       await prisma.user.deleteMany({ where: { id: { in: userIds } } })
     } else {
       const status = action === 'ACTIVATE' ? 'ACTIVE' : 'SUSPENDED'
-      await prisma.user.updateMany({
-        where: { id: { in: userIds } },
-        data: { status }
+      await prisma.$transaction(async (tx) => {
+        await tx.user.updateMany({ where: { id: { in: userIds } }, data: { status } })
+        if (status === 'SUSPENDED') {
+          await tx.session.updateMany({ where: { userId: { in: userIds } }, data: { isActive: false } })
+        }
       })
     }
 

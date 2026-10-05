@@ -11,7 +11,7 @@ export interface RegisterPayload {
 
 export const authService = {
   login: (payload: LoginPayload) =>
-    api.post<ApiResponse<{ accessToken: string; refreshToken: string; user: User }>>('/auth/login', payload),
+    api.post<ApiResponse<{ accessToken: string; user: User }>>('/auth/login', payload),
 
   requestEmailOtp: (payload: LoginPayload) =>
     api.post<ApiResponse>('/auth/request-email-otp', payload),
@@ -21,8 +21,8 @@ export const authService = {
 
   logout: () => api.post('/auth/logout'),
 
-  refresh: (refreshToken: string) =>
-    api.post<ApiResponse<{ accessToken: string }>>('/auth/refresh', { refreshToken }),
+  refresh: () =>
+    api.post<ApiResponse<{ accessToken: string }>>('/auth/refresh', {}),
 
   verifyEmail: (email: string, token: string) =>
     api.post<ApiResponse>('/auth/verify-email', { email, token }),

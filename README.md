@@ -137,7 +137,7 @@ npm run db:seed
 
 **Default Admin Credentials (created during seed):**
 - **Email:** admin@megadraw.com (or username: admin)
-- **Password:** Admin@123456
+- **Password:** Set `ADMIN_SEED_PASSWORD` (at least 16 characters) before seeding.
 
 **Start the Development Server:**
 ```bash
@@ -237,3 +237,16 @@ npm install && npx prisma generate && npm run build
 ```bash
 npm run db:migrate && npm start
 ```
+
+### Security hardening deployment notes
+
+- Set `ADMIN_SEED_PASSWORD` to a strong password of at least 16 characters before seeding. The seed script refuses defaults. Rotate any existing admin account that previously used the documented default, and revoke its sessions; seeding does not reset an existing account's password.
+- Production startup requires working email configuration: `RESEND_API_KEY`, or `SMTP_HOST`, `SMTP_USER`, and `SMTP_PASS`. OTPs are never returned by the API. Email delivery errors no longer print codes or reset links in production.
+- Set `TRUSTED_PROXIES` to the actual ingress proxy IPs/CIDRs, separated by commas. Leave it empty for direct connections. Do not use a universal allowlist. Both supplied Nginx proxies overwrite client-provided forwarding headers. With no proxy configuration, traffic behind one proxy shares that proxy's IP rate limit, so configure this before rollout.
+- Refresh cookies now use `Path=/` so both `/auth/refresh` and `/api/auth/refresh` work. The frontend removes legacy localStorage access tokens and restores authentication using the HttpOnly cookie. Existing sessions with cookies on the old path may need one new login.
+- Pending registrations made by an older deployment must register again. To remove legacy plaintext passwords immediately, delete only the `pending_reg:*` keys in the application's Redis namespace, or let their 15-minute TTL expire; never flush unrelated data.
+- Settings writes accept the complete validated schema for `general`, `lottery`, `user`, `wallet`, or `security`. Unknown fields/categories are rejected. Public reads include only known display fields.
+- Coupon transfers reserve funds locally before submitting to the provider. HTTP 202 means confirmation is pending; customers must not retry it as a new transfer. Failed/ambiguous acknowledgements never trigger an automatic refund. Inspect the pending transaction and confirm the outcome in the coupon provider's ledger before calling `POST /wallet/transfers/:reference/resolve` with an admin session and `{ "outcome": "COMPLETED" | "FAILED", "providerReference": "...", "notes": "..." }`. A confirmed failure refunds funds atomically once. Provider reconciliation is manual until the external platform supplies a verifiable status API.
+- Review external API/WebSocket origins when tightening the Render static site's `connect-src` CSP. The supplied policy permits HTTPS/WSS integrations while preventing inline scripts, embedding, and object execution.
+
+Run `npm test`, `npm run build`, and `npm run build --prefix frontend` before deployment. Security audit results and remediation details are in `SECURITY_REVIEW.md` and `security-audit/`.

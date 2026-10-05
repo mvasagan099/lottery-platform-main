@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Modal from '@/components/UI/Modal';
 import { api } from '@/services/api';
 import toast from 'react-hot-toast';
+import { sanitizeSupportMessage } from '@/lib/sanitizeSupportMessage';
 
 interface Props {
   ticketId: string | null;
@@ -63,7 +64,7 @@ export default function SupportTicketModal({ ticketId, onClose }: Props) {
                 <div style={{ fontSize: '11px', opacity: 0.7, marginBottom: '4px' }}>
                   {msg.senderType === 'USER' ? 'You' : 'Support Team'} • {new Date(msg.createdAt).toLocaleString()}
                 </div>
-                <div dangerouslySetInnerHTML={{ __html: msg.message }} />
+                <div dangerouslySetInnerHTML={{ __html: sanitizeSupportMessage(msg.message || '') }} />
               </div>
             ))}
           </div>

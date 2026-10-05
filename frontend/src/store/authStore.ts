@@ -62,10 +62,16 @@ export const useAuthStore = create<AuthStore>()(
     }),
     {
       name: 'auth-store',
-      // Retain user, accessToken, and isAuthenticated so session survives page reloads seamlessly
+      version: 1,
+      // Drop legacy persisted tokens during migration and hydration.
+      migrate: (persisted: any) => ({ user: persisted?.user ?? null,
+        isAuthenticated: !!persisted?.isAuthenticated }),
+      merge: (persisted: any, current) => ({ ...current,
+        user: persisted?.user ?? null,
+        isAuthenticated: !!persisted?.isAuthenticated,
+        accessToken: null }),
       partialize: (state) => ({
         user: state.user,
-        accessToken: state.accessToken,
         isAuthenticated: state.isAuthenticated,
       }),
     }

@@ -7,6 +7,7 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 import Fastify from 'fastify'
+import type { FastifyError } from 'fastify'
 import cors from '@fastify/cors'
 import helmet from '@fastify/helmet'
 import rateLimit from '@fastify/rate-limit'
@@ -18,6 +19,7 @@ import swaggerUi from '@fastify/swagger-ui'
 import { PrismaClient } from '@prisma/client'
 import Redis from 'ioredis'
 import crypto from 'crypto'
+import rawBody from 'fastify-raw-body'
 
 // Route imports
 import authRoutes from './routes/auth'
@@ -63,7 +65,10 @@ async function buildApp() {
         options: { colorize: true }
       } : undefined,
     },
-    trustProxy: true,
+    // Explicit proxy IP/CIDR allowlist; direct callers cannot spoof their IP.
+    trustProxy: process.env.TRUSTED_PROXIES
+      ? process.env.TRUSTED_PROXIES.split(',').map(value => value.trim()).filter(Boolean)
+      : false,
     // LOW-05: Prevent large-payload DoS on all JSON routes
     bodyLimit: 1_048_576, // 1 MB
   })
@@ -131,6 +136,7 @@ async function buildApp() {
   })
 
   // ── File upload ───────────────────────────────────────
+  await app.register(rawBody, { global: false, encoding: false, runFirst: true })
   await app.register(multipart, {
     limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
   })
@@ -199,7 +205,7 @@ async function buildApp() {
   await app.register(rbacRoutes, { prefix: '/rbac' })
 
   // ── Global error handler ──────────────────────────────
-  app.setErrorHandler(async (error, request, reply) => {
+  app.setErrorHandler<FastifyError>(async (error, request, reply) => {
     request.log.error({ err: error, url: request.url, method: request.method })
 
     if (error.validation || error.name === 'ZodError' || (error as any).issues) {
@@ -311,6 +317,10 @@ function checkCORSOrigins() {
 async function start() {
   checkSecretStrength()
   checkCORSOrigins()
+  if (process.env.NODE_ENV === 'production' && !process.env.RESEND_API_KEY &&
+      !(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS)) {
+    throw new Error('Production requires configured email delivery credentials')
+  }
 
   const app = await buildApp()
   const port = Number(process.env.PORT) || 3001
