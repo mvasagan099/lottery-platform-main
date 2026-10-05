@@ -364,6 +364,21 @@ async function main() {
       },
     })
 
+    // Ensure jackpot pool exists
+    await prisma.jackpotPool.upsert({
+      where: { gameId: createdGame.id },
+      update: {
+        currentJackpot: game.jackpotAmount,
+        baseJackpot: game.minJackpot,
+      },
+      create: {
+        gameId: createdGame.id,
+        currentJackpot: game.jackpotAmount,
+        baseJackpot: game.minJackpot,
+        rolloverAmount: 0,
+      },
+    })
+
     // Delete old prize divisions and recreate
     await prisma.prizeDivision.deleteMany({ where: { gameId: createdGame.id } })
     await prisma.prizeDivision.createMany({
