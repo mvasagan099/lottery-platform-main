@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../../services/api'
 import { X, Play, Hash, Users, Ticket, Award, RefreshCw, Radio, CheckCircle, Shield } from 'lucide-react'
+import GoldCoin from '../../components/common/GoldCoin'
 import dayjs from 'dayjs'
 import toast from 'react-hot-toast'
 
@@ -145,7 +146,7 @@ export function DrawExecutionDrawer({ drawId, onClose }: Props) {
           <div className="grid-4" style={{ gap: 'var(--space-md)' }}>
             <div className="card" style={{ padding: 'var(--space-md)' }}>
               <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: 4 }}>Jackpot</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 600, color: '#f59e0b' }}>🪙{Number(record?.jackpotAmount || 0).toLocaleString()}</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 600, color: '#f59e0b', display: 'flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={18} />{Number(record?.jackpotAmount || 0).toLocaleString()}</div>
             </div>
             <div className="card" style={{ padding: 'var(--space-md)' }}>
               <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: 4 }}>Tickets Sold</div>
@@ -153,7 +154,7 @@ export function DrawExecutionDrawer({ drawId, onClose }: Props) {
             </div>
             <div className="card" style={{ padding: 'var(--space-md)' }}>
               <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: 4 }}>Total Sales</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 600 }}>🪙{Number(record?.totalSales || 0).toLocaleString()}</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={18} />{Number(record?.totalSales || 0).toLocaleString()}</div>
             </div>
             <div className="card" style={{ padding: 'var(--space-md)' }}>
               <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: 4 }}>Draw Method</div>
@@ -293,7 +294,11 @@ export function DrawExecutionDrawer({ drawId, onClose }: Props) {
                               <td style={{ padding: '12px 16px', fontWeight: 600 }}>{div.divisionName}</td>
                               <td style={{ padding: '12px 16px' }}>{div.isJackpot ? '0' : Math.floor(Math.random() * 50) + (10-i)}</td>
                               <td style={{ padding: '12px 16px', fontWeight: 600, color: div.isJackpot ? '#f59e0b' : 'var(--text-primary)' }}>
-                                {div.isJackpot ? 'Rollover' : div.fixedPrize ? `🪙${Number(div.fixedPrize).toFixed(2)}` : 'Calculated'}
+                                {div.isJackpot ? 'Rollover' : div.fixedPrize ? (
+                                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                    <GoldCoin size={14} />{Number(div.fixedPrize).toFixed(2)}
+                                  </span>
+                                ) : 'Calculated'}
                               </td>
                             </tr>
                           ))}

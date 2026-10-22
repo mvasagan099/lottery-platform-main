@@ -5,6 +5,7 @@ import { cmsService } from '@/services/index'
 import JackpotCounter from '@/components/UI/JackpotCounter'
 import CountdownTimer from '@/components/UI/CountdownTimer'
 import LoadingScreen from '@/components/UI/LoadingScreen'
+import GoldCoin from '@/components/common/GoldCoin'
 import { ChevronRight, Zap, Shield, Users, Trophy, Star, ArrowRight, Play } from 'lucide-react'
 import { motion } from 'framer-motion'
 
@@ -45,7 +46,7 @@ export default function HomePage() {
     { icon: <Shield size={28} />, title: 'Safe & Secure', desc: 'Bank-grade SSL encryption and licensed by global authorities.', color: '#10b981' },
     { icon: <Zap size={28} />, title: 'Instant Prizes', desc: 'Prizes automatically credited to your wallet after each draw.', color: '#f5a623' },
     { icon: <Users size={28} />, title: '100K+ Members', desc: 'Join hundreds of thousands of globals playing online.', color: '#6366f1' },
-    { icon: <Trophy size={28} />, title: '🪙50M+ Paid Out', desc: 'Verified winners from every major global lottery.', color: '#3b82f6' },
+    { icon: <Trophy size={28} />, title: <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={20} />50M+ Paid Out</span>, desc: 'Verified winners from every major global lottery.', color: '#3b82f6' },
   ]
 
   const gameCategories = [
@@ -105,9 +106,13 @@ export default function HomePage() {
               <div className="oz-hero-right" style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <span className="animate-coin-flip" style={{ 
-                    fontSize: 'clamp(60px, 15vw, 120px)', fontWeight: 900, lineHeight: 1, marginRight: 'clamp(8px, 2vw, 16px)',
-                    filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.2))'
-                  }}>🪙</span>
+                    marginRight: 'clamp(8px, 2vw, 16px)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    filter: 'drop-shadow(0 4px 14px rgba(245, 166, 35, 0.5))'
+                  }}>
+                    <GoldCoin size="clamp(60px, 15vw, 120px)" />
+                  </span>
                   <span style={{ 
                     fontSize: 'clamp(80px, 22vw, 160px)', fontWeight: 900, lineHeight: 0.85, fontFamily: 'var(--font-display)', letterSpacing: '-0.02em',
                     background: 'linear-gradient(to bottom, #ffe885, #f5a623)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
@@ -191,8 +196,8 @@ export default function HomePage() {
             <div className="section-subtitle">Trusted by globals for safe and fair online lottery</div>
           </div>
           <div className="grid-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', justifyContent: 'center' }}>
-            {features.map((f) => (
-              <div key={f.title} className="card card-body" style={{ textAlign: 'center' }}>
+            {features.map((f, idx) => (
+              <div key={idx} className="card card-body" style={{ textAlign: 'center' }}>
                 <div style={{
                   width: '64px', height: '64px', borderRadius: '20px',
                   background: `rgba(${hexToRgb(f.color)}, 0.12)`,
@@ -284,8 +289,8 @@ export default function HomePage() {
                         <span style={{ fontSize: '14px', color: 'var(--text-muted)', fontStyle: 'italic' }}>Draw not yet held</span>
                       )}
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '22px', whiteSpace: 'nowrap' }}>
-                      <span>🪙</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '22px', whiteSpace: 'nowrap' }}>
+                      <GoldCoin size={24} />
                       <span style={{ background: 'var(--gradient-gold)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                         {(Number(game.jackpotAmount) / 1_000_000).toFixed(0)}M
                       </span>
@@ -319,11 +324,13 @@ export default function HomePage() {
           <div style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '16px' }}>
             LIMITED TIME
           </div>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 5vw, 52px)', fontWeight: 900, letterSpacing: '-0.03em', marginBottom: '16px' }}>
-            Get a <span>🪙</span> <span style={{ background: 'var(--gradient-gold)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>10 Welcome Bonus</span>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 5vw, 52px)', fontWeight: 900, letterSpacing: '-0.03em', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <span>Get a</span>
+            <GoldCoin size="clamp(32px, 6vw, 48px)" />
+            <span style={{ background: 'var(--gradient-gold)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>10 Welcome Bonus</span>
           </h2>
-          <p style={{ fontSize: '18px', color: 'rgba(255,255,255,0.7)', marginBottom: '36px', maxWidth: '480px', margin: '0 auto 36px' }}>
-            Register today and get 🪙10 free credit to start playing. No deposit required.
+          <p style={{ fontSize: '18px', color: 'rgba(255,255,255,0.7)', marginBottom: '36px', maxWidth: '480px', margin: '0 auto 36px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', flexWrap: 'wrap' }}>
+            Register today and get <GoldCoin size={20} /> 10 free credit to start playing. No deposit required.
           </p>
           <Link to="/register" className="btn btn-gold btn-xl">
             Claim Bonus <ArrowRight size={18} />
@@ -418,8 +425,10 @@ function GameCard({ game }: { game: any; index: number }) {
       </div>
       
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: style.prize, textShadow: style.prize === '#ffeb3b' ? '0 2px 10px rgba(0,0,0,0.1)' : 'none' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-          <span className="animate-coin-flip" style={{ fontSize: 'clamp(40px, 8vw, 50px)', fontWeight: 800 }}>🪙</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+          <span className="animate-coin-flip" style={{ display: 'inline-flex' }}>
+            <GoldCoin size="clamp(40px, 8vw, 52px)" />
+          </span>
           <span className="animated-jackpot" style={{ fontSize: 'clamp(48px, 12vw, 64px)', fontWeight: 900, lineHeight: 1, fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}>
             {jackpotStr}
           </span>

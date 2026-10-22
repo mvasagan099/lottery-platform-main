@@ -3,7 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ticketsService } from '@/services/index'
 import NumberBall from '@/components/UI/NumberBall'
 import Spinner from '@/components/UI/Spinner'
-import { ArrowLeft, Ticket, Calendar, Coins, CheckCircle, Info, Clock, Receipt } from 'lucide-react'
+import { ArrowLeft, Ticket, Calendar, CheckCircle, Info, Clock, Receipt } from 'lucide-react'
+import GoldCoin from '@/components/common/GoldCoin'
 import toast from 'react-hot-toast'
 
 export default function TicketDetailPage() {
@@ -20,7 +21,7 @@ export default function TicketDetailPage() {
   const claimMutation = useMutation({
     mutationFn: () => ticketsService.claimPrize(id!),
     onSuccess: (r) => {
-      toast.success(`Claimed 🪙${r.data.data?.amount} successfully!`)
+      toast.success(`Claimed ${r.data.data?.amount} Coins successfully!`)
       queryClient.invalidateQueries({ queryKey: ['ticket', id] })
       queryClient.invalidateQueries({ queryKey: ['wallet'] })
     },
@@ -95,7 +96,7 @@ export default function TicketDetailPage() {
                 <div style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <Receipt size={14} /> Total Cost
                 </div>
-                <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><Coins size={14} color="gold" /> {Number(ticket.totalCost).toFixed(2)}</div>
+                <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={15} /> {Number(ticket.totalCost).toFixed(2)}</div>
               </div>
               {ticket.draw && (
                 <div style={{ background: 'var(--bg-secondary)', padding: '16px', borderRadius: '12px' }}>

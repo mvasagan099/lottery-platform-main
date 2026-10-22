@@ -4,6 +4,7 @@ import api from '../../services/api'
 import { 
   X, User, ShieldAlert, CheckCircle, XCircle, CreditCard, Clock, Activity, AlertTriangle, ArrowRightLeft, ShieldCheck
 } from 'lucide-react'
+import GoldCoin from '../../components/common/GoldCoin'
 import toast from 'react-hot-toast'
 import { formatDistanceToNow } from 'date-fns'
 
@@ -120,16 +121,16 @@ export function DepositDetailsDrawer({ depositId, onClose }: Props) {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: 'var(--text-muted)' }}>Amount Deposited</span>
-                    <span style={{ fontWeight: 700, fontSize: '1.25rem' }}>🪙 {Number(deposit.amount).toLocaleString()}</span>
+                    <span style={{ fontWeight: 700, fontSize: '1.25rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={18} /> {Number(deposit.amount).toLocaleString()}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: 'var(--text-muted)' }}>Processing Fee (0%)</span>
-                    <span style={{ fontWeight: 600 }}>🪙 0.00</span>
+                    <span style={{ fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={15} /> 0.00</span>
                   </div>
                   <div style={{ height: '1px', backgroundColor: 'var(--border-color)' }} />
                   <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--success-color)' }}>
                     <span style={{ fontWeight: 600 }}>Net Credited</span>
-                    <span style={{ fontWeight: 800, fontSize: '1.25rem' }}>🪙 {Number(deposit.amount).toLocaleString()}</span>
+                    <span style={{ fontWeight: 800, fontSize: '1.25rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={18} /> {Number(deposit.amount).toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -187,15 +188,15 @@ export function DepositDetailsDrawer({ depositId, onClose }: Props) {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: 'var(--text-muted)' }}>Available Balance</span>
-                    <span style={{ fontWeight: 600, color: 'var(--success-color)' }}>🪙 {Number(deposit?.wallet?.balance || 0).toLocaleString()}</span>
+                    <span style={{ fontWeight: 600, color: 'var(--success-color)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={15} /> {Number(deposit?.wallet?.balance || 0).toLocaleString()}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: 'var(--text-muted)' }}>Bonus Balance</span>
-                    <span style={{ fontWeight: 600 }}>🪙 {Number(deposit?.wallet?.bonusBalance || 0).toLocaleString()}</span>
+                    <span style={{ fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={15} /> {Number(deposit?.wallet?.bonusBalance || 0).toLocaleString()}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: 'var(--text-muted)' }}>Lifetime Deposited</span>
-                    <span style={{ fontWeight: 600 }}>🪙 {Number(deposit?.wallet?.totalDeposited || 0).toLocaleString()}</span>
+                    <span style={{ fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={15} /> {Number(deposit?.wallet?.totalDeposited || 0).toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -291,11 +292,11 @@ export function DepositDetailsDrawer({ depositId, onClose }: Props) {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '0.85rem' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Refund Amount:</span>
-                <span style={{ fontWeight: 700, color: '#ef4444' }}>🪙 {Number(deposit?.amount || 0).toLocaleString()} ({deposit?.currency})</span>
+                <span style={{ fontWeight: 700, color: '#ef4444', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={14} /> {Number(deposit?.amount || 0).toLocaleString()} ({deposit?.currency})</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Wallet Available Balance:</span>
-                <span style={{ fontWeight: 600 }}>🪙 {Number(deposit?.wallet?.balance || 0).toLocaleString()}</span>
+                <span style={{ fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={14} /> {Number(deposit?.wallet?.balance || 0).toLocaleString()}</span>
               </div>
             </div>
 

@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { ticketsService } from '@/services/index'
 import { Pagination } from '@/components/UI'
-import { Ticket, ChevronRight, Filter, Coins } from 'lucide-react'
+import GoldCoin from '@/components/common/GoldCoin'
+import { Ticket, ChevronRight, Filter } from 'lucide-react'
 
 export default function MyTicketsPage() {
   const [page, setPage] = useState(1)
@@ -79,13 +80,13 @@ export default function MyTicketsPage() {
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
                       <span style={{ color: 'var(--text-muted)' }}>Cost:</span>
-                      <span style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><Coins size={14} color="gold" /> {Number(ticket.totalCost).toFixed(2)}</span>
+                      <span style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={14} /> {Number(ticket.totalCost).toFixed(2)}</span>
                     </div>
                   </div>
 
                   {ticket.status === 'WON' && (
                     <div style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981', padding: '10px 12px', borderRadius: '8px', fontWeight: 700, textAlign: 'center', marginBottom: '16px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px' }}>🏆 Won <Coins size={16} color="gold" /> {Number(ticket.prizeAmount).toFixed(2)}</div>
+                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px' }}>🏆 Won <GoldCoin size={16} /> {Number(ticket.prizeAmount).toFixed(2)}</div>
                     </div>
                   )}
 

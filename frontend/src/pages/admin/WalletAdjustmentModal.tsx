@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../../services/api'
 import { X, PlusCircle, MinusCircle, Gift } from 'lucide-react'
+import GoldCoin from '../../components/common/GoldCoin'
 import toast from 'react-hot-toast'
 
 interface Props {
@@ -85,7 +86,7 @@ export function WalletAdjustmentModal({ walletId, userId, username, onClose }: P
           </div>
 
           <div className="form-group">
-            <label className="form-label">Amount (🪙)</label>
+            <label className="form-label" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>Amount (<GoldCoin size={14} />)</label>
             <input 
               type="number" 
               className="form-input" 

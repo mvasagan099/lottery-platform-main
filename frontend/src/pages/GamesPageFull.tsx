@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { gamesService } from '@/services/games.service'
 import CountdownTimer from '@/components/UI/CountdownTimer'
+import GoldCoin from '@/components/common/GoldCoin'
 import { Search, Filter, Zap, ChevronRight } from 'lucide-react'
 
 export default function GamesPageFull() {
@@ -162,8 +163,10 @@ function GameCard({ game }: { game: any; index: number }) {
       </div>
       
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: style.prize, textShadow: style.prize === '#ffeb3b' ? '0 2px 10px rgba(0,0,0,0.1)' : 'none' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-          <span className="animate-coin-flip" style={{ fontSize: '50px', fontWeight: 800 }}>🪙</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+          <span className="animate-coin-flip" style={{ display: 'inline-flex' }}>
+            <GoldCoin size={52} />
+          </span>
           <span className="animated-jackpot" style={{ fontSize: '64px', fontWeight: 900, lineHeight: 1, fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}>
             {jackpotStr}
           </span>

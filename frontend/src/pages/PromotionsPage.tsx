@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Gift, Zap, ShieldCheck, Copy, Check } from 'lucide-react'
+import GoldCoin from '@/components/common/GoldCoin'
 import { useAuthStore } from '@/store/authStore'
 import toast from 'react-hot-toast'
 
@@ -26,8 +27,8 @@ export default function PromotionsPage() {
   const promos = [
     {
       id: 1,
-      title: '🪙10 Welcome Bonus',
-      desc: 'Sign up today and get 🪙10 free credit added to your wallet. No deposit required.',
+      title: <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><GoldCoin size={20} /> 10 Welcome Bonus</span>,
+      desc: <>Sign up today and get <GoldCoin size={15} style={{ display: 'inline-block', verticalAlign: '-2px', margin: '0 2px' }} />10 free credit added to your wallet. No deposit required.</>,
       icon: <Gift size={32} style={{ color: '#f5a623' }} />,
       cta: user ? 'Bonus Active in Wallet' : 'Claim Bonus',
       link: user ? '/wallet' : '/register',
@@ -36,13 +37,13 @@ export default function PromotionsPage() {
     },
     {
       id: 2,
-      title: 'Refer a Friend, Get 🪙20',
-      desc: 'Invite your friends to MegaDraw. When they make their first deposit, you both get 🪙20 bonus credit.',
+      title: <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>Refer a Friend, Get <GoldCoin size={20} /> 20</span>,
+      desc: <>Invite your friends to MegaDraw. When they make their first deposit, you both get <GoldCoin size={15} style={{ display: 'inline-block', verticalAlign: '-2px', margin: '0 2px' }} />20 bonus credit.</>,
       icon: <Zap size={32} style={{ color: 'var(--color-primary)' }} />,
       cta: copied ? 'Link Copied!' : 'Get Referral Link',
       action: handleCopyReferral,
       isButton: true,
-      terms: 'Minimum 🪙20 deposit required by referred user.'
+      terms: <>Minimum <GoldCoin size={13} style={{ display: 'inline-block', verticalAlign: '-2px', margin: '0 2px' }} />20 deposit required by referred user.</>
     },
     {
       id: 3,

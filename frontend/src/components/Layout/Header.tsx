@@ -11,6 +11,7 @@ import {
   Trophy, Ticket, Settings, Menu, X, LayoutDashboard, Zap, MessageCircle
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import GoldCoin from '@/components/common/GoldCoin'
 
 export default function Header() {
   const navigate = useNavigate()
@@ -121,7 +122,7 @@ export default function Header() {
               <>
                 {/* Wallet */}
                 <Link to="/wallet" className="wallet-chip">
-                  <Wallet size={16} />
+                  <GoldCoin size={17} />
                   <span>{Number(balance).toFixed(2)}</span>
                   <span style={{ opacity: 0.95, fontSize: '12px', marginLeft: '2px', color: 'var(--color-secondary)' }}>Coins</span>
                 </Link>

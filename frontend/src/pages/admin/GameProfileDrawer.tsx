@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../../services/api'
 import { X, Trophy, DollarSign, Settings, Users, Percent, Shield, Activity, BarChart2 } from 'lucide-react'
+import GoldCoin from '../../components/common/GoldCoin'
 import dayjs from 'dayjs'
 import toast from 'react-hot-toast'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts'
@@ -84,11 +85,11 @@ export function GameProfileDrawer({ gameId, onClose }: Props) {
           <div className="grid-4" style={{ gap: 'var(--space-md)' }}>
             <div className="card" style={{ padding: 'var(--space-md)' }}>
               <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: 4 }}>Jackpot</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 600, color: '#f59e0b' }}>🪙{Number(record?.jackpotAmount || 0).toLocaleString()}</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 600, color: '#f59e0b', display: 'flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={18} />{Number(record?.jackpotAmount || 0).toLocaleString()}</div>
             </div>
             <div className="card" style={{ padding: 'var(--space-md)' }}>
               <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: 4 }}>Ticket Price</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 600 }}>🪙{Number(record?.ticketPrice || 0).toFixed(2)}</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={18} />{Number(record?.ticketPrice || 0).toFixed(2)}</div>
             </div>
             <div className="card" style={{ padding: 'var(--space-md)' }}>
               <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: 4 }}>Pool Type</div>
@@ -228,7 +229,11 @@ export function GameProfileDrawer({ gameId, onClose }: Props) {
                                 Match {div.matchNumbers} {div.matchPB && ' + PB'} {div.matchSupp > 0 && ` + ${div.matchSupp} Supp`}
                               </td>
                               <td style={{ padding: '12px 16px', fontWeight: 600, color: div.isJackpot ? '#f59e0b' : 'var(--text-primary)' }}>
-                                {div.isJackpot ? 'JACKPOT' : div.fixedPrize ? `🪙${Number(div.fixedPrize).toFixed(2)}` : 'Varies'}
+                                {div.isJackpot ? 'JACKPOT' : div.fixedPrize ? (
+                                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                    <GoldCoin size={14} />{Number(div.fixedPrize).toFixed(2)}
+                                  </span>
+                                ) : 'Varies'}
                               </td>
                             </tr>
                           ))

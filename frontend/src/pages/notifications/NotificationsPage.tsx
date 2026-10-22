@@ -4,6 +4,7 @@ import { notificationsService } from '@/services/index'
 import { Pagination } from '@/components/UI'
 import { Bell, Check, Trash2, Trophy, Ticket, DollarSign, Info } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { renderWithGoldCoins } from '@/components/common/GoldCoin'
 
 export default function NotificationsPage() {
   const [page, setPage] = useState(1)
@@ -80,10 +81,10 @@ export default function NotificationsPage() {
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                      <div style={{ fontWeight: n.isRead ? 600 : 700, fontSize: '15px', color: n.isRead ? 'var(--text-secondary)' : 'var(--text-primary)' }}>{n.title}</div>
+                      <div style={{ fontWeight: n.isRead ? 600 : 700, fontSize: '15px', color: n.isRead ? 'var(--text-secondary)' : 'var(--text-primary)' }}>{renderWithGoldCoins(n.title)}</div>
                       <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{new Date(n.createdAt).toLocaleDateString()}</div>
                     </div>
-                    <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{n.message}</p>
+                    <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{renderWithGoldCoins(n.message)}</p>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {!n.isRead && (

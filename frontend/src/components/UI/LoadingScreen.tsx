@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import GoldCoin from '../common/GoldCoin'
 
 interface LoadingScreenProps {
   message?: string
@@ -39,13 +40,14 @@ export default function LoadingScreen({ message = 'Loading MegaDraw Platform...'
           animate={{ rotateY: [0, 360] }}
           transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
           style={{
-            fontSize: '64px',
-            lineHeight: 1,
-            filter: 'drop-shadow(0 6px 16px rgba(245, 166, 35, 0.5))',
+            filter: 'drop-shadow(0 6px 20px rgba(245, 166, 35, 0.6))',
             zIndex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
-          🪙
+          <GoldCoin size={72} />
         </motion.div>
       </div>
 

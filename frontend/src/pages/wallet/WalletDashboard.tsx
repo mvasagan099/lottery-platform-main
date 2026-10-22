@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query'
 import { walletService } from '@/services/wallet.service'
 import { Link } from 'react-router-dom'
 import { Wallet, ArrowUpRight, ArrowDownLeft, Clock, CreditCard } from 'lucide-react'
+import GoldCoin from '@/components/common/GoldCoin'
 import { useAuthStore } from '@/store/authStore'
 
 export function WalletDashboard() {
@@ -34,9 +35,10 @@ export function WalletDashboard() {
           <div style={{ opacity: 0.7, fontSize: '13px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '8px' }}>
             Available Balance
           </div>
-          <div className="wallet-amount">
-            {Number(wallet?.balance || 0).toFixed(2)}
-            <span className="wallet-currency" style={{ marginLeft: '8px' }}>Coins</span>
+          <div className="wallet-amount" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <GoldCoin size={36} />
+            <span>{Number(wallet?.balance || 0).toFixed(2)}</span>
+            <span className="wallet-currency" style={{ marginLeft: '4px' }}>Coins</span>
           </div>
           {Number(wallet?.bonusBalance || 0) > 0 && (
             <div style={{ marginTop: '8px', fontSize: '14px', opacity: 0.7 }}>

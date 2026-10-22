@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../../services/api'
 import { X, Save, Plus, Trash2 } from 'lucide-react'
+import GoldCoin from '../../components/common/GoldCoin'
 import toast from 'react-hot-toast'
 
 interface Props {
@@ -134,7 +135,7 @@ export function EditPrizeDivisionsDrawer({ isOpen, onClose, gameId, initialDivis
                     </div>
                     {!div.isJackpot && (
                       <div>
-                        <label className="form-label">Fixed Prize (🪙)</label>
+                        <label className="form-label" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>Fixed Prize (<GoldCoin size={13} />)</label>
                         <input type="number" step="0.01" className="form-input" value={div.fixedPrize || ''} onChange={e => updateDivision(i, 'fixedPrize', e.target.value)} placeholder="e.g. 50.00" />
                       </div>
                     )}

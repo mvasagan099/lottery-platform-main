@@ -6,6 +6,7 @@ import { useSettings } from '../../../hooks/useSettings';
 import Spinner from '../../../components/UI/Spinner';
 import { Save } from 'lucide-react';
 import { motion } from 'framer-motion';
+import GoldCoin from '../../../components/common/GoldCoin';
 
 export function LotterySettingsPage() {
   const { settings, isLoading, updateSettings, isUpdating } = useSettings('lottery');
@@ -48,12 +49,16 @@ export function LotterySettingsPage() {
         <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '24px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}>Ticket Configuration</h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px', maxWidth: '650px' }}>
           <div className="form-group">
-            <label className="form-label">Minimum Ticket Price (🪙)</label>
+            <label className="form-label" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              Minimum Ticket Price (<GoldCoin size={13} />)
+            </label>
             <input type="number" step="0.01" {...register('minTicketPrice', { valueAsNumber: true })} className={`form-input ${errors.minTicketPrice ? 'error' : ''}`} style={{ height: '40px' }} />
             {errors.minTicketPrice && <span style={{ color: 'var(--color-danger)', fontSize: '12px' }}>{errors.minTicketPrice.message}</span>}
           </div>
           <div className="form-group">
-            <label className="form-label">Maximum Ticket Price (🪙)</label>
+            <label className="form-label" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              Maximum Ticket Price (<GoldCoin size={13} />)
+            </label>
             <input type="number" step="0.01" {...register('maxTicketPrice', { valueAsNumber: true })} className="form-input" style={{ height: '40px' }} />
           </div>
           <div className="form-group">

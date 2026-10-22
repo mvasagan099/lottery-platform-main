@@ -9,6 +9,7 @@ import { WithdrawalDetailsDrawer } from './WithdrawalDetailsDrawer' // force ts 
 import { 
   Search, ArrowDownRight, Clock, CheckCircle, XCircle, AlertTriangle
 } from 'lucide-react'
+import GoldCoin from '../../components/common/GoldCoin'
 import { formatDistanceToNow } from 'date-fns'
 
 export default function WithdrawalsAdminPage() {
@@ -94,7 +95,7 @@ export default function WithdrawalsAdminPage() {
     {
       accessorKey: 'amount',
       header: 'Amount',
-      cell: info => <strong style={{ color: 'var(--text-primary)' }}>🪙 {Number(info.getValue() || 0).toLocaleString()}</strong>
+      cell: info => <strong style={{ color: 'var(--text-primary)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={14} />{Number(info.getValue() || 0).toLocaleString()}</strong>
     },
     {
       accessorKey: 'gateway',
@@ -166,7 +167,7 @@ export default function WithdrawalsAdminPage() {
           <div className="card" style={{ padding: 'var(--space-lg)', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
             <div>
               <div style={{ color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 500, marginBottom: '8px' }}>Amount Pending</div>
-              <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)' }}>🪙 {Number(totalPendingAmount).toLocaleString()}</div>
+              <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}><GoldCoin size={26} />{Number(totalPendingAmount).toLocaleString()}</div>
             </div>
             <div style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: 'rgba(245,158,11,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f59e0b' }}>
               <ArrowDownRight size={20} />
@@ -176,7 +177,7 @@ export default function WithdrawalsAdminPage() {
           <div className="card" style={{ padding: 'var(--space-lg)', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
             <div>
               <div style={{ color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 500, marginBottom: '8px' }}>Total Paid</div>
-              <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)' }}>🪙 {Number(totalCompletedAmount).toLocaleString()}</div>
+              <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}><GoldCoin size={26} />{Number(totalCompletedAmount).toLocaleString()}</div>
             </div>
             <div style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: 'rgba(16,185,129,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981' }}>
               <CheckCircle size={20} />

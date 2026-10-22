@@ -4,6 +4,7 @@ import api from '../../services/api'
 import { 
   X, User, ShieldAlert, CheckCircle, XCircle, CreditCard, Clock, Activity, AlertTriangle
 } from 'lucide-react'
+import GoldCoin from '../../components/common/GoldCoin'
 import toast from 'react-hot-toast'
 import { formatDistanceToNow } from 'date-fns'
 
@@ -117,16 +118,16 @@ export function WithdrawalDetailsDrawer({ withdrawalId, onClose }: Props) {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: 'var(--text-muted)' }}>Amount Requested</span>
-                    <span style={{ fontWeight: 700, fontSize: '1.25rem' }}>🪙 {Number(withdrawal.amount).toLocaleString()}</span>
+                    <span style={{ fontWeight: 700, fontSize: '1.25rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={18} /> {Number(withdrawal.amount).toLocaleString()}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: 'var(--text-muted)' }}>Network Fee</span>
-                    <span style={{ fontWeight: 600 }}>🪙 0.00</span>
+                    <span style={{ fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={15} /> 0.00</span>
                   </div>
                   <div style={{ height: '1px', backgroundColor: 'var(--border-color)' }} />
                   <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--primary-color)' }}>
                     <span style={{ fontWeight: 600 }}>Net Payout</span>
-                    <span style={{ fontWeight: 800, fontSize: '1.25rem' }}>🪙 {Number(withdrawal.amount).toLocaleString()}</span>
+                    <span style={{ fontWeight: 800, fontSize: '1.25rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={18} /> {Number(withdrawal.amount).toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -188,19 +189,19 @@ export function WithdrawalDetailsDrawer({ withdrawalId, onClose }: Props) {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: 'var(--text-muted)' }}>Available Balance</span>
-                    <span style={{ fontWeight: 600 }}>🪙 {Number(withdrawal?.wallet?.balance || 0).toLocaleString()}</span>
+                    <span style={{ fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={15} /> {Number(withdrawal?.wallet?.balance || 0).toLocaleString()}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: 'var(--text-muted)' }}>Pending Withdrawals</span>
-                    <span style={{ fontWeight: 600, color: 'var(--warning-color)' }}>🪙 {Number(withdrawal?.wallet?.pendingBalance || 0).toLocaleString()}</span>
+                    <span style={{ fontWeight: 600, color: 'var(--warning-color)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={15} /> {Number(withdrawal?.wallet?.pendingBalance || 0).toLocaleString()}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: 'var(--text-muted)' }}>Lifetime Deposited</span>
-                    <span style={{ fontWeight: 600 }}>🪙 {Number(withdrawal?.wallet?.totalDeposited || 0).toLocaleString()}</span>
+                    <span style={{ fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={15} /> {Number(withdrawal?.wallet?.totalDeposited || 0).toLocaleString()}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: 'var(--text-muted)' }}>Lifetime Withdrawn</span>
-                    <span style={{ fontWeight: 600 }}>🪙 {Number(withdrawal?.wallet?.totalWithdrawn || 0).toLocaleString()}</span>
+                    <span style={{ fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={15} /> {Number(withdrawal?.wallet?.totalWithdrawn || 0).toLocaleString()}</span>
                   </div>
                 </div>
               </div>

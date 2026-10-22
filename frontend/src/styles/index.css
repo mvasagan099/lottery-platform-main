@@ -1497,8 +1497,29 @@ input:checked + .switch-track::after { transform: translateY(-50%) translateX(20
 
 .animate-coin-flip {
   animation: coin-flip 4s infinite cubic-bezier(0.4, 0, 0.2, 1);
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transform-style: preserve-3d;
+  filter: drop-shadow(0 4px 14px rgba(245, 166, 35, 0.45));
+}
+
+.gold-coin-svg {
+  display: inline-block;
+  vertical-align: middle;
+  filter: drop-shadow(0 2px 4px rgba(245, 166, 35, 0.35));
+}
+
+.gold-coin-amount {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-feature-settings: 'tnum';
+}
+
+.gold-coin-emoji {
+  display: inline-block;
+  filter: sepia(100%) saturate(600%) hue-rotate(10deg) brightness(115%) contrast(110%);
 }
 
 @media (max-width: 900px) {

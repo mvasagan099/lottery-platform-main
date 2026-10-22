@@ -9,6 +9,7 @@ import { CreateGameDrawer } from './CreateGameDrawer'
 import { 
   Search, Dices, DollarSign, Activity, Percent, Ban, CheckCircle, Calendar 
 } from 'lucide-react'
+import GoldCoin from '../../components/common/GoldCoin'
 import dayjs from 'dayjs'
 import toast from 'react-hot-toast'
 
@@ -115,12 +116,12 @@ export default function GamesAdminPage() {
     {
       accessorKey: 'jackpotAmount',
       header: 'Advertised Jackpot',
-      cell: (info: any) => <div style={{ fontWeight: 600, color: '#f59e0b' }}>🪙{Number(info.getValue()).toLocaleString()}</div>
+      cell: (info: any) => <div style={{ fontWeight: 600, color: '#f59e0b', display: 'flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={14} />{Number(info.getValue()).toLocaleString()}</div>
     },
     {
       accessorKey: 'ticketPrice',
       header: 'Ticket Price',
-      cell: (info: any) => <div style={{ fontWeight: 500 }}>🪙{Number(info.getValue()).toFixed(2)}</div>
+      cell: (info: any) => <div style={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={14} />{Number(info.getValue()).toFixed(2)}</div>
     },
     {
       accessorKey: 'drawSchedule',
@@ -182,7 +183,7 @@ export default function GamesAdminPage() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-lg)', marginBottom: 'var(--space-xl)' }}>
         <SummaryCard title="Total Games" value={stats.totalGames} icon={<Dices size={20} color="#3b82f6" />} />
         <SummaryCard title="Active Games" value={stats.activeGames} icon={<CheckCircle size={20} color="#10b981" />} />
-        <SummaryCard title="Total Advertised Jackpots" value={`🪙${Number(stats.totalJackpots).toLocaleString(undefined, {minimumFractionDigits: 2})}`} icon={<DollarSign size={20} color="#f59e0b" />} />
+        <SummaryCard title="Total Advertised Jackpots" value={<span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={20} />{Number(stats.totalJackpots).toLocaleString(undefined, {minimumFractionDigits: 2})}</span>} icon={<DollarSign size={20} color="#f59e0b" />} />
         <SummaryCard title="Upcoming Draws" value="12" icon={<Calendar size={20} color="#8b5cf6" />} />
       </div>
 
@@ -298,7 +299,7 @@ export default function GamesAdminPage() {
   )
 }
 
-function SummaryCard({ title, value, icon }: { title: string, value: string | number, icon: React.ReactNode }) {
+function SummaryCard({ title, value, icon }: { title: string, value: React.ReactNode, icon: React.ReactNode }) {
   return (
     <div className="card" style={{ padding: 'var(--space-md)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>

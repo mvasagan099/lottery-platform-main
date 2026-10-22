@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import GoldCoin from '../common/GoldCoin'
 
 interface JackpotCounterProps {
   amount: number
@@ -50,7 +51,7 @@ export default function JackpotCounter({ amount, currency = 'USD', className, si
     <div className={className}>
       <div className="jackpot-label">JACKPOT</div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-        <span style={{ fontSize: `calc(${fontSizes[size]} * 0.8)`, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }}>🪙</span>
+        <GoldCoin size={`calc(${fontSizes[size]} * 0.8)`} />
         <div
           className="jackpot-display animate-jackpot"
           style={{ fontSize: fontSizes[size] }}

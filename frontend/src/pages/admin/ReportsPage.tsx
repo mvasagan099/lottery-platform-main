@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import dayjs from 'dayjs'
 import toast from 'react-hot-toast'
+import GoldCoin from '../../components/common/GoldCoin'
 
 export function ReportsPage() {
   const [dateRange, setDateRange] = useState('30') // days
@@ -79,7 +80,12 @@ export function ReportsPage() {
     toast.success('CSV downloaded successfully!')
   }
 
-  const formatCurrency = (val: number | undefined) => `🪙${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val || 0)}`
+  const formatCurrency = (val: number | undefined) => (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+      <GoldCoin size={15} />
+      {new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val || 0)}
+    </span>
+  )
 
   return (
     <div className="section" style={{ padding: 'var(--space-md) var(--space-lg)' }}>
@@ -143,7 +149,7 @@ export function ReportsPage() {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
                   <XAxis dataKey="name" stroke="var(--text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="var(--text-secondary)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `🪙${val}`} />
+                  <YAxis stroke="var(--text-secondary)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `${val}`} />
                   <RechartsTooltip 
                     contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px' }}
                     itemStyle={{ color: 'var(--text-primary)' }}
@@ -168,7 +174,7 @@ export function ReportsPage() {
                 <BarChart data={charts?.slice(-7) || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
                   <XAxis dataKey="name" stroke="var(--text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="var(--text-secondary)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `🪙${val > 1000 ? (val/1000).toFixed(1)+'k' : val}`} />
+                  <YAxis stroke="var(--text-secondary)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `${val > 1000 ? (val/1000).toFixed(1)+'k' : val}`} />
                   <RechartsTooltip cursor={{ fill: 'var(--bg-hover)' }} contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px' }} />
                   <Legend />
                   <Bar dataKey="deposits" name="Deposits" fill="#3b82f6" radius={[4, 4, 0, 0]} />
@@ -245,7 +251,7 @@ function Clock({ size, color }: { size: number, color: string }) {
   )
 }
 
-function KPICard({ title, value, icon, trend }: { title: string, value: string, icon: React.ReactNode, trend: number }) {
+function KPICard({ title, value, icon, trend }: { title: string, value: React.ReactNode, icon: React.ReactNode, trend: number }) {
   const isPositive = trend > 0
   
   return (

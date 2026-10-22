@@ -9,6 +9,7 @@ import { ScheduleDrawDrawer } from './ScheduleDrawDrawer'
 import { 
   Search, Radio, Calendar, CheckCircle, Ticket, AlertCircle 
 } from 'lucide-react'
+import GoldCoin from '../../components/common/GoldCoin'
 import dayjs from 'dayjs'
 import toast from 'react-hot-toast'
 
@@ -98,12 +99,12 @@ export default function DrawsAdminPage() {
     {
       accessorKey: 'jackpotAmount',
       header: 'Jackpot',
-      cell: (info: any) => <div style={{ fontWeight: 600, color: '#f59e0b' }}>🪙{Number(info.getValue()).toLocaleString()}</div>
+      cell: (info: any) => <div style={{ fontWeight: 600, color: '#f59e0b', display: 'flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={14} />{Number(info.getValue()).toLocaleString()}</div>
     },
     {
       accessorKey: 'totalSales',
       header: 'Total Sales',
-      cell: (info: any) => <div style={{ fontWeight: 500 }}>🪙{Number(info.getValue()).toLocaleString()}</div>
+      cell: (info: any) => <div style={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={14} />{Number(info.getValue()).toLocaleString()}</div>
     },
     {
       accessorKey: 'status',
@@ -173,7 +174,7 @@ export default function DrawsAdminPage() {
         <SummaryCard title="Live/Pending Draws" value={stats.liveDraws} icon={<Radio size={20} color="#3b82f6" />} />
         <SummaryCard title="Scheduled Draws" value={stats.scheduledDraws} icon={<Calendar size={20} color="#8b5cf6" />} />
         <SummaryCard title="Completed Draws" value={stats.totalDraws - stats.scheduledDraws - stats.liveDraws} icon={<CheckCircle size={20} color="#10b981" />} />
-        <SummaryCard title="Total Ticket Sales" value={`🪙${Number(stats.totalSales).toLocaleString()}`} icon={<Ticket size={20} color="#f59e0b" />} />
+        <SummaryCard title="Total Ticket Sales" value={<span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={20} />{Number(stats.totalSales).toLocaleString()}</span>} icon={<Ticket size={20} color="#f59e0b" />} />
       </div>
 
       {/* Toolbar */}
@@ -315,7 +316,7 @@ export default function DrawsAdminPage() {
   )
 }
 
-function SummaryCard({ title, value, icon }: { title: string, value: string | number, icon: React.ReactNode }) {
+function SummaryCard({ title, value, icon }: { title: string, value: React.ReactNode, icon: React.ReactNode }) {
   return (
     <div className="card" style={{ padding: 'var(--space-md)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>

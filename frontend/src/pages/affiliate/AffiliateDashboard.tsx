@@ -3,6 +3,7 @@ import { affiliateService } from '@/services/index'
 import { Copy, Trophy, Users, DollarSign, MousePointerClick, CheckCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import StatCard from '@/components/UI/StatCard'
+import GoldCoin from '@/components/common/GoldCoin'
 
 export default function AffiliateDashboard() {
   const { data: profile } = useQuery({
@@ -70,8 +71,8 @@ export default function AffiliateDashboard() {
         </div>
 
         <div className="grid-4" style={{ marginBottom: '32px' }}>
-          <StatCard title="Total Earned" value={`🪙${Number(profile.totalEarned).toFixed(2)}`} icon={<Trophy size={20} />} variant="gold" />
-          <StatCard title="Pending Payout" value={`🪙${Number(profile.pendingAmount).toFixed(2)}`} icon={<DollarSign size={20} />} variant="green" />
+          <StatCard title="Total Earned" value={<span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={20} />{Number(profile.totalEarned).toFixed(2)}</span>} icon={<Trophy size={20} />} variant="gold" />
+          <StatCard title="Pending Payout" value={<span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={20} />{Number(profile.pendingAmount).toFixed(2)}</span>} icon={<DollarSign size={20} />} variant="green" />
           <StatCard title="Total Signups" value={profile.totalSignups} icon={<Users size={20} />} />
           <StatCard title="Link Clicks" value={profile.totalClicks} icon={<MousePointerClick size={20} />} />
         </div>
@@ -117,7 +118,11 @@ export default function AffiliateDashboard() {
                     commissions.map((comm: any) => (
                       <tr key={comm.id}>
                         <td>{new Date(comm.createdAt).toLocaleDateString()}</td>
-                        <td style={{ fontWeight: 700, color: 'var(--color-success)' }}>🪙{Number(comm.amount).toFixed(2)}</td>
+                        <td style={{ fontWeight: 700, color: 'var(--color-success)' }}>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            <GoldCoin size={14} />{Number(comm.amount).toFixed(2)}
+                          </span>
+                        </td>
                         <td>
                           <span className={`badge ${comm.isPaid ? 'badge-success' : 'badge-warning'}`}>
                             {comm.isPaid ? 'PAID' : 'PENDING'}

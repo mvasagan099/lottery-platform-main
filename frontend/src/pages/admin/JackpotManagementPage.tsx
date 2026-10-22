@@ -6,6 +6,7 @@ import {
   ChevronDown, ChevronUp, Trophy, AlertCircle, History, FileText
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import GoldCoin from '@/components/common/GoldCoin'
 
 // ── API helper calls ─────────────────────────────────────────────────────────
 
@@ -167,7 +168,12 @@ export default function JackpotManagementPage() {
     onError: (e: any) => toast.error(e.response?.data?.error || 'Failed to adjust jackpot'),
   })
 
-  const fmt = (n: any) => `🪙${Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+  const fmt = (n: any) => (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+      <GoldCoin size={13} />
+      {Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+    </span>
+  )
   const fmtDate = (d: string) => new Date(d).toLocaleString()
 
   return (
@@ -372,7 +378,7 @@ export default function JackpotManagementPage() {
                         <td style={{ fontWeight: 700 }}>#{h.drawNumber}</td>
                         <td>{fmt(h.jackpotBefore)}</td>
                         <td style={{ color: '#10b981', fontWeight: 600 }}>+{fmt(h.ticketContrib)}</td>
-                        <td style={{ color: '#8b5cf6' }}>{Number(h.rolloverAmount) > 0 ? `🔄 ${fmt(h.rolloverAmount)}` : '—'}</td>
+                        <td style={{ color: '#8b5cf6' }}>{Number(h.rolloverAmount) > 0 ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>🔄 {fmt(h.rolloverAmount)}</span> : '—'}</td>
                         <td>
                           {h.winnerCount > 0
                             ? <span style={{ color: '#f59e0b', fontWeight: 700 }}>🏆 {h.winnerCount}</span>

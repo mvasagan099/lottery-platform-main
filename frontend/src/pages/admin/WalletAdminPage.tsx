@@ -10,6 +10,7 @@ import { WalletAdjustmentModal } from './WalletAdjustmentModal'
 import { 
   Search, ArrowDownRight, ArrowUpRight, Clock, CheckCircle, Wallet, AlertTriangle, Plus
 } from 'lucide-react'
+import GoldCoin from '../../components/common/GoldCoin'
 import { formatDistanceToNow } from 'date-fns'
 
 export default function WalletAdminPage() {
@@ -94,7 +95,7 @@ export default function WalletAdminPage() {
     {
       accessorKey: 'amount',
       header: 'Amount',
-      cell: info => <strong style={{ color: 'var(--text-primary)' }}>🪙 {Number(info.getValue()).toLocaleString()}</strong>
+      cell: info => <strong style={{ color: 'var(--text-primary)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={14} />{Number(info.getValue()).toLocaleString()}</strong>
     },
     {
       accessorKey: 'gateway',
@@ -169,7 +170,7 @@ export default function WalletAdminPage() {
           <div className="card" style={{ padding: 'var(--space-md) var(--space-lg)', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px', minWidth: 0 }}>
             <div style={{ minWidth: 0, flex: 1 }}>
               <div style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500, marginBottom: '6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Total Deposits</div>
-              <div style={{ fontSize: 'clamp(1rem, 1.4vw, 1.5rem)', fontWeight: 700, color: 'var(--text-primary)', wordBreak: 'break-word', overflowWrap: 'anywhere' }}>🪙 {Number(totalCompletedAmount).toLocaleString()}</div>
+              <div style={{ fontSize: 'clamp(1rem, 1.4vw, 1.5rem)', fontWeight: 700, color: 'var(--text-primary)', wordBreak: 'break-word', overflowWrap: 'anywhere', display: 'flex', alignItems: 'center', gap: '6px' }}><GoldCoin size={22} />{Number(totalCompletedAmount).toLocaleString()}</div>
             </div>
             <div style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: 'rgba(16,185,129,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981', flexShrink: 0 }}>
               <ArrowUpRight size={20} />

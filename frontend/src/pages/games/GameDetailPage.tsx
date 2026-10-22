@@ -7,6 +7,7 @@ import CountdownTimer from '@/components/UI/CountdownTimer'
 import NumberBall from '@/components/UI/NumberBall'
 import JackpotCounter from '@/components/UI/JackpotCounter'
 import Spinner from '@/components/UI/Spinner'
+import GoldCoin from '@/components/common/GoldCoin'
 import { Ticket, Zap, RefreshCw, ChevronRight, Info } from 'lucide-react'
 import toast from 'react-hot-toast'
 import DrawAnimationModal from '@/components/games/DrawAnimationModal'
@@ -277,7 +278,7 @@ export default function GameDetailPage() {
                 >
                   {lineOptions.map(num => (
                     <option key={num} value={num}>
-                      {num} Game{num > 1 ? 's' : ''} - 🪙{(num * game.ticketPrice).toFixed(2)}
+                      {num} Game{num > 1 ? 's' : ''} - {(num * game.ticketPrice).toFixed(2)} Coins
                     </option>
                   ))}
                 </select>
@@ -416,7 +417,7 @@ export default function GameDetailPage() {
               {/* Cost breakdown */}
               <div style={{ background: 'var(--bg-secondary)', borderRadius: '12px', padding: '14px', marginBottom: '16px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '6px' }}>
-                  <span>{lines.length} line{lines.length > 1 ? 's' : ''} × 🪙{game.ticketPrice} × {numDraws} draw{numDraws > 1 ? 's' : ''}</span>
+                  <span>{lines.length} line{lines.length > 1 ? 's' : ''} × <GoldCoin size={13} style={{ display: 'inline-block', verticalAlign: '-2px' }} />{game.ticketPrice} × {numDraws} draw{numDraws > 1 ? 's' : ''}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: '20px', fontFamily: 'var(--font-display)' }}>
                   <span>Total</span>
@@ -442,7 +443,7 @@ export default function GameDetailPage() {
                   {purchaseMutation.isPending ? (
                     <><div className="btn-spinner" /> Processing...</>
                   ) : (
-                    <><Ticket size={18} /> Buy Ticket for 🪙{totalCost.toFixed(2)}</>
+                    <><Ticket size={18} /> Buy Ticket for <GoldCoin size={16} style={{ display: 'inline-block', verticalAlign: '-2px', margin: '0 2px' }} />{totalCost.toFixed(2)}</>
                   )}
                 </button>
               ) : (
@@ -469,7 +470,7 @@ export default function GameDetailPage() {
             <div className="card-header">
               <h2 className="modal-title">Prize Divisions</h2>
               <div style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
-                Current jackpot: <strong style={{ color: 'var(--color-secondary)' }}>🪙{(Number(game.jackpotAmount) / 1_000_000).toFixed(1)}M</strong>
+                Current jackpot: <strong style={{ color: 'var(--color-secondary)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={16} />{(Number(game.jackpotAmount) / 1_000_000).toFixed(1)}M</strong>
               </div>
             </div>
             <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
@@ -488,15 +489,15 @@ export default function GameDetailPage() {
                       <td style={{ color: 'var(--text-secondary)' }}>{div.description}</td>
                       <td>
                         {div.isJackpot ? (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <span>🪙</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <GoldCoin size={18} />
                             <span style={{ fontWeight: 800, fontSize: '16px', background: 'var(--gradient-gold)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                               {(Number(game.jackpotAmount) / 1_000_000).toFixed(1)}M+
                             </span>
                           </div>
                         ) : div.fixedPrize ? (
-                          <span style={{ fontWeight: 700, color: 'var(--color-accent-dark)' }}>
-                            🪙{Number(div.fixedPrize).toFixed(2)}
+                          <span style={{ fontWeight: 700, color: 'var(--color-accent-dark)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            <GoldCoin size={14} />{Number(div.fixedPrize).toFixed(2)}
                           </span>
                         ) : (
                           <span style={{ color: 'var(--text-muted)' }}>Varies</span>

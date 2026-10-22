@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminService } from '@/services/index'
 import { Save, LayoutTemplate, Settings2 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import GoldCoin from '@/components/common/GoldCoin'
 
 export default function HeroEditorTab() {
   const queryClient = useQueryClient()
@@ -25,7 +26,7 @@ export default function HeroEditorTab() {
         HERO_JACKPOT_SUBTITLE: heroSettings['HERO_JACKPOT_SUBTITLE'] || 'Across all 9 games this week',
         HERO_STATS_GAMES: heroSettings['HERO_STATS_GAMES'] || '9',
         HERO_STATS_MEMBERS: heroSettings['HERO_STATS_MEMBERS'] || '100K+',
-        HERO_STATS_PAID: heroSettings['HERO_STATS_PAID'] || '🪙50M+',
+        HERO_STATS_PAID: heroSettings['HERO_STATS_PAID'] ? heroSettings['HERO_STATS_PAID'].replace('🪙', '') : '50M+',
       })
     } else {
       setFormData({
@@ -33,7 +34,7 @@ export default function HeroEditorTab() {
         HERO_JACKPOT_SUBTITLE: 'Across all 9 games this week',
         HERO_STATS_GAMES: '9',
         HERO_STATS_MEMBERS: '100K+',
-        HERO_STATS_PAID: '🪙50M+',
+        HERO_STATS_PAID: '50M+',
       })
     }
   }, [settingsData])
@@ -131,7 +132,9 @@ export default function HeroEditorTab() {
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">Prizes Paid</label>
+                <label className="form-label" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  Prizes Paid (<GoldCoin size={13} />)
+                </label>
                 <input 
                   type="text" 
                   className="form-input" 

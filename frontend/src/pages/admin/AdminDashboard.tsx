@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { adminService } from '@/services/index'
 import StatCard from '@/components/UI/StatCard'
+import GoldCoin from '@/components/common/GoldCoin'
 import { Users, Ticket, Wallet, ShieldCheck, Activity } from 'lucide-react'
 
 export default function AdminDashboard() {
@@ -19,7 +20,7 @@ export default function AdminDashboard() {
           <StatCard title="Total Users" value={stats?.totalUsers || 0} icon={<Users size={20} />} />
           <StatCard title="Pending KYC" value={stats?.pendingKYC || 0} icon={<ShieldCheck size={20} />} variant="gold" />
           <StatCard title="Pending Withdrawals" value={stats?.pendingWithdrawals || 0} icon={<Wallet size={20} />} variant="gold" />
-          <StatCard title="Today's Revenue" value={`🪙${Number(stats?.totalRevenue || 0).toFixed(2)}`} icon={<Activity size={20} />} variant="green" />
+          <StatCard title="Today's Revenue" value={<span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><GoldCoin size={20} />{Number(stats?.totalRevenue || 0).toFixed(2)}</span>} icon={<Activity size={20} />} variant="green" />
         </div>
 
         <div className="card card-body">

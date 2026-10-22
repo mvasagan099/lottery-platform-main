@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { walletService } from '@/services/wallet.service'
 import { ArrowUpRight, Info, ShieldAlert } from 'lucide-react'
+import GoldCoin from '@/components/common/GoldCoin'
 import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
@@ -119,13 +120,17 @@ export default function WithdrawPage() {
           </div>
 
           <div>
-            <div className="form-label" style={{ marginBottom: '12px' }}>Amount to Transfer (Min 🪙50)</div>
+            <div className="form-label" style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              Amount to Transfer (Min <GoldCoin size={14} /> 50)
+            </div>
             <div className="input-wrapper">
-              <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontWeight: 700, color: 'var(--text-muted)' }}>🪙</span>
+              <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center' }}>
+                <GoldCoin size={16} />
+              </span>
               <input
                 type="number"
                 className="form-input"
-                style={{ paddingLeft: '28px' }}
+                style={{ paddingLeft: '34px' }}
                 placeholder="0.00"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../../services/api'
 import { X, Calendar, Save, Hash, DollarSign, Dices } from 'lucide-react'
+import GoldCoin from '../../components/common/GoldCoin'
 import toast from 'react-hot-toast'
 
 interface Props {
@@ -131,7 +132,7 @@ export function ScheduleDrawDrawer({ isOpen, onClose, defaultGameId }: Props) {
             </div>
 
             <div className="form-group">
-              <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><DollarSign size={16}/> Jackpot Amount (🪙)</label>
+              <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><DollarSign size={16}/> Jackpot Amount (<GoldCoin size={14} />)</label>
               <input type="number" step="0.01" className="form-input" value={jackpotAmount} onChange={(e) => setJackpotAmount(e.target.value)} />
             </div>
 

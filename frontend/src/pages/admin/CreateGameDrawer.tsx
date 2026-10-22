@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../../services/api'
 import { X, Save, DollarSign, Settings, Hash, Clock } from 'lucide-react'
+import GoldCoin from '../../components/common/GoldCoin'
 import toast from 'react-hot-toast'
 
 const gameSchema = z.object({
@@ -124,11 +125,11 @@ export function CreateGameDrawer({ isOpen, onClose }: Props) {
               <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem', marginTop: 0 }}><DollarSign size={18}/> Pricing & Jackpot</h3>
               <div style={{ display: 'flex', gap: '16px' }}>
                 <div className="form-group" style={{ flex: 1 }}>
-                  <label className="form-label">Ticket Price (🪙)</label>
+                  <label className="form-label" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>Ticket Price (<GoldCoin size={13} />)</label>
                   <input type="number" step="0.01" className={`form-input ${errors.ticketPrice ? 'error' : ''}`} {...register('ticketPrice', { valueAsNumber: true })} />
                 </div>
                 <div className="form-group" style={{ flex: 1 }}>
-                  <label className="form-label">Starting Jackpot (🪙)</label>
+                  <label className="form-label" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>Starting Jackpot (<GoldCoin size={13} />)</label>
                   <input type="number" className={`form-input ${errors.jackpotAmount ? 'error' : ''}`} {...register('jackpotAmount', { valueAsNumber: true })} />
                 </div>
               </div>
