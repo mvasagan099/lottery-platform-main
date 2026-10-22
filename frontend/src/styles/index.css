@@ -2143,6 +2143,7 @@ input:checked + .switch-track::after { transform: translateY(-50%) translateX(20
   font-weight: 900;
   background: var(--gradient-gold);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 2px 4px rgba(245, 166, 35, 0.2));
   margin: var(--space-xs) 0;
